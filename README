@@ -1,0 +1,10 @@
+## Virtual Env.
+`virtualenv -p /usr/bin/python3.7 virtenv`
+`source virtenv/bin/activate`
+`python --version`
+
+## Install Dependencies
+pip install -r requirements.txt
+
+## Unit tests.
+`python -m unittest tests/CSETests.py`
