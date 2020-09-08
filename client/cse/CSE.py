@@ -9,7 +9,7 @@ from client.ae.AE import AE
 
 class CSE():
     # Instance of AE returned by register_ae call.
-    ae = None
+    # ae = None
 
     def __init__(self, host, port):
         self.https = False
@@ -17,6 +17,8 @@ class CSE():
         self.port = port
 
     def register_ae(self, ae):
+        """Register the AE with the CSE.
+        """
         if isinstance(ae, AE) is False:
             raise InvalidArgumentException('AE registration expects an instance AE.')
 
@@ -42,3 +44,4 @@ class CSE():
 
         # Create an instance of AE from the response content (pc).
         return AE(oneM2MResponse.pc)
+
