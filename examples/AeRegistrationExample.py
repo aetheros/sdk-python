@@ -49,7 +49,7 @@ def main():
         # Clean up AE.
         if pn_cse.ae is not None:
             del_res = pn_cse.delete_ae()
-            print('AE delete response code: '.format(del_res.rsc))
+            print('AE delete response code: {}'.format(del_res.rsc))
 
 if __name__ == '__main__':
     main()
