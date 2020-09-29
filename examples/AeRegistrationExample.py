@@ -41,54 +41,6 @@ def main():
         print('AE registration successful:')
         print(ae)
 
-        # Discover containers.
-        print('Discovering containers:')
-        containers = pn_cse.discover_containers()
-        print('Retrieved {} containers\n'.format(len(containers)))
-
-        # Pick a container resource to work with.
-        containerUri = containers[0]
-
-        # Create a subscription to the container.
-        print('Subscribing to container: {}'.format(containerUri))
-        sub_res  = pn_cse.create_subscription(containerUri, '10.250.10.142:8080')
-        print('Subscription created: '.format(sub_res.cn))
-
-        print('Creating content instance of resource {}'.format(containerUri))
-        cin_uri= pn_cse.create_content_instance(containerUri)
-        print('Content instance created: '.format(cin_uri))
-
-        print('Retrieving content instance: {}'.format(cin_uri))
-        res = pn_cse.retrieve_content_instance(cin_uri)
-        print(res)
-
-        print('Retrieving subscription: {}'.format(sub_res.cn))
-        res = pn_cse.retrieve_resource(sub_res.cn)
-        print(json.loads(res.pc))
-
-        print('Updating subscription resource: {}'.format(sub_res.cn))
-        res = pn_cse.update_resource(sub_res.cn, 'sub', 'enc',
-        "{'enc': { 'net': [4], 'ty': 5 }, 'nct': 1, 'nu': [notification_uri]}"
-        )
-        print(res)
-
-        print('Retrieving subscription: {}'.format(sub_res.cn))
-        res = pn_cse.retrieve_resource(sub_res.cn)
-        print(json.loads(res.pc))
-
-        # print('Retrieving container: {}'.format(containerUri))
-        # res = pn_cse.retrieve_resource(containerUri)
-        # print(json.loads(res.pc))
-
-        # print('Retrieving most recent content instance: {}'.format(containerUri))
-        # cin= pn_cse.retrieve_latest_content_instance(containerUri)
-
-        # if cin is not None:
-        #     print('Content instance recieved.')
-        #     print(cin)
-        # else:
-        #     print('Could not latest retrieve content instance for resource: {}'.format(containerUri))
-
     except Exception as err:
         print('Exception raised...\n')
         print(err)
