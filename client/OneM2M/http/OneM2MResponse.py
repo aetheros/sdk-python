@@ -3,10 +3,24 @@
 import requests, json
 
 from client.OneM2M.http.HttpHeader import HttpHeader
-from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
+from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive, MissingRequiredControlParams
 from client.OneM2M.OneM2MOperation import OneM2MOperation
+from client.OneM2M.OneM2MResource import OneM2MResource
 
 class OneM2MResponse(OneM2MPrimitive):
+    # An exception will be thrown if the http_response object from the requests 
+    # lib is missing any of the required control or content params listed here.
+    # @todo add remaining params.
+    REQUIRED_PARAMS = {
+        OneM2MPrimitive.CONTROL: [
+            OneM2MPrimitive.M2M_PARAM_RESPONSE_STATUS_CODE,   # 'rsc' in header
+        ],
+        OneM2MPrimitive.CONTENT: [
+            OneM2MResource.M2M_ATTR_PRIMITIVE_CONTENT,  # 'pc' in body
+            # This is not really enforced and not necessary...
+        ]
+    }
+
     # The HTTP headers listed here will be converted to their corresponding
     # onem2m parameter.
     # If a header is not included here, it will be ignored.
@@ -36,6 +50,7 @@ class OneM2MResponse(OneM2MPrimitive):
         """
 
         # Map headers to parameters.
+        # Raises MissingRequiredControlParams exception if a required control header is missing.
         self._map_http_headers_to_m2m_params(http_response.headers)
 
         # Store the message body as the Content (pc) param. 
@@ -44,10 +59,25 @@ class OneM2MResponse(OneM2MPrimitive):
     def _map_http_headers_to_m2m_params(self, headers):
         """Converts HTTP headers onem2m2 response primitive params and stores them
            instance members.
+
+           raises MissingRequiredControlParams
         """
 
         # Filter out unsupported headers and convert them to their corresponding onem2m param.
+        # @note returns a list of tuples ('param': 'value')
+        # @todo refactor tuples into OneM2MParam class instances.
         onem2m_params = { self.HTTP_HEADER_M2M_PARAM_TO_MAP[h]:v for h,v in headers.items() if h in self.SUPPORTED_HEADERS }
+        onem2m_param_keys = (param for param in onem2m_params)
+
+        # Ensure all required control params were included.
+        missing_control_params = []
+
+        for required_param in self.REQUIRED_PARAMS[OneM2MPrimitive.CONTROL]:
+            if required_param not in onem2m_param_keys: 
+                missing_control_params.append(required_param)
+
+        if len(missing_control_params):
+            raise MissingRequiredControlParams('On2M2M Response Primitive Missing required control param(s) {}'.format(missing_control_params))
 
         # Store the params as instance members.
         self.__dict__ = onem2m_params

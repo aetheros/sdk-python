@@ -2,18 +2,30 @@
 
 import json
 
-from client.OneM2M.OneM2MEntity import OneM2MEntity
+from client.OneM2M.OneM2MResource import OneM2MResource
 
-class AE(OneM2MEntity):
-    # 
+# TS-0001 9.6.5 Resource Type AE.
+class AE(OneM2MResource):
+    # AE specific resource attibutes
+    # TS-0004 Table 8.2.3-1
+    # @todo add remaining AE specific attributes.
+    M2M_ATTR_APP_ID = 'api'
+    M2M_ATTR_AE_ID = 'aei'
+    M2M_ATTR_APP_NAME = 'apn'
+    M2M_ATTR_POINT_OF_ACCESS = 'poa'
+
+    # Attributes that must be defined in each instance.
     REQUIRED_ATTRIBUTES = [
-        'aei'
+        M2M_ATTR_AE_ID
     ]
     
     def __init__(self, args):
         """Constructor
             Expects a dictionary representation of an AE to generate members.
         """
+
+        # Resource short name.
+        OneM2MResource.short_name = 'ae'
 
         # Expects a dict, but should handle the string representation of a json object.
         # Clearer when deserializing response content to an object.
@@ -30,7 +42,6 @@ class AE(OneM2MEntity):
 
         self._validate_attributes(ae)
         self.__dict__ = ae
-        # self.__dict__ = {'ae': ae}
 
     def __str__(self):
         """Print string repr when print is called on object.
@@ -41,7 +52,6 @@ class AE(OneM2MEntity):
         """Print string when repr is called on object.
         """
         return json.dumps(self.__dict__)
-
         
     def _validate_attributes(self, ae):
         """ Validates attribute.

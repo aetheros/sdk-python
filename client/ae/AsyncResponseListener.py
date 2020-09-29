@@ -3,6 +3,7 @@
 import json, asyncio, threading
 
 from aiohttp import web
+from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
 
 from client.OneM2M.http.OneM2MResponse import OneM2MResponse
 
@@ -21,7 +22,7 @@ class AsyncResponseListenerFactory():
             AsyncResponseListenerFactory.instance = AsyncResponseListenerFactory.__AsyncResponseListener(host, port)
     
     def get_instance(self):
-        """ Return the singlton instance.
+        """ Return the singleton instance.
         """
 
         return AsyncResponseListenerFactory.instance
@@ -55,8 +56,12 @@ class AsyncResponseListenerFactory():
             # Initialize the server.
             server = web.Application()
 
+            # @todo make routes configurable via params.
             server.add_routes([
-                web.get('/{rqi}', self._handler)
+                web.get('/', self._handler),
+                web.post('/', self._handler),
+                web.get('/{rqi}', self._handler),
+                web.post('/{rqi}', self._handler)
                 ])
 
             # Start the server.
@@ -86,13 +91,19 @@ class AsyncResponseListenerFactory():
             # web.run_app(server, host=self.host, port=self.port)
 
         async def _handler(self, req):
-            # @todo source from header.
-            rqi = req.match_info.get('rqi')
+            request_method = req.method
+            request_id = req.headers[OneM2MPrimitive.X_M2M_RI]
 
-            # Execute callback.
-            cb = self.rqi_cb_map[rqi]
+            res = web.Response(content_type=OneM2MPrimitive.CONTENT_TYPE_JSON)
 
-            return web.Response(text = cb(req))
+            if request_id in self.rqi_cb_map.keys():
+                # Execute callback and pass it the req.
+                await self.rqi_cb_map[request_id](req, res)
+            else:
+                # No handler has been registed for this request id.
+                res.set_status(4004)
+
+            return res
 
         def set_rqi_cb(self, rqi, cb):
             """Set the callback function for a specific rqi.

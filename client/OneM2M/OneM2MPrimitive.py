@@ -4,7 +4,12 @@ from client.OneM2M.OneM2MOperation import OneM2MOperation
 from client.OneM2M.http.HttpHeader import HttpHeader
 from client.OneM2M.http.HttpStatusCode import HttpStatusCode
 
+import json
+
 class OneM2MPrimitive():
+    CONTROL = 'control'
+    CONTENT = 'content'
+
     CONTENT_TYPE_JSON = 'application/vnd.onem2m-res+json; ty=2'
 
     # OneM2M HTTP HEADERS
@@ -12,6 +17,7 @@ class OneM2MPrimitive():
     X_M2M_RI = 'X-M2M-RI'
     X_M2M_GID = 'X-M2M-GID'
     X_M2M_RTU = 'X-M2M-RTU'
+    X_M2M_RTV = 'X-M2M-RTV'
     X_M2M_OT = 'X-M2M-OT'
     X_M2M_RST = 'X-M2M-RST'
     X_M2M_RET = 'X-M2M-RET'
@@ -32,16 +38,19 @@ class OneM2MPrimitive():
     M2M_PARAM_RESPONSE_STATUS_CODE= 'rsc'
 
     # Query string request parameters.
-    RESPONSE_TYPE = 'rt'
-    RESULT_PERSISTENCE = 'rp'
+    # M2M_PARAM_RESPONSE_TYPE = 'rt'
+    # M2M_PARAM_RESULT_PERSISTENCE = 'rp'
+    # M2M_PARAM_RESULT_CONTENT = 'rcn'
     # @todo add remaining from TS-0009 Table 6.2.2.2-1 
 
     # OneM2M Parameter to HTTP Header Map.
     M2M_PARAM_TO_HTTP_HEADER_MAP = {
         M2M_PARAM_TO: HttpHeader.URI,
-        M2M_PARAM_FROM: X_M2M_ORIGIN,
         M2M_PARAM_OPERATION: HttpHeader.METHOD,
-        M2M_PARAM_REQUEST_IDENTIFIER: X_M2M_RI
+        M2M_PARAM_FROM: X_M2M_ORIGIN,
+        M2M_PARAM_REQUEST_IDENTIFIER: X_M2M_RI,
+        X_M2M_RTV: X_M2M_RTV,        
+        X_M2M_RTU: X_M2M_RTU        
     }
 
     # HTTP Header to OneM2M Parameter Map.
@@ -83,10 +92,14 @@ class OneM2MPrimitive():
     }
 
     # OneM2M Response Status Codes
-    M2M_RSC_OK = 2000
-    M2M_RSC_CREATED = 2001
-    M2M_RSC_DELETED = 2002
-    M2M_RSC_UPDATED = 2004
+    # @note all response codes should be declared as strings to avoid
+    # casting response codes returned from the requests lib to strings
+    # when handling request responses.
+    M2M_RSC_OK = '2000'
+    M2M_RSC_CREATED = '2001'
+    M2M_RSC_DELETED = '2002'
+    M2M_RSC_UPDATED = '2004'
+    # @todo add remaining status code from TS-0009 Table 6.3.2-1 'Status Code Mapping'
 
     M2M_REPONSE_STATUS_CODES = [
         M2M_RSC_OK,
@@ -94,3 +107,10 @@ class OneM2MPrimitive():
         M2M_RSC_DELETED,
         M2M_RSC_UPDATED
     ]
+
+    def __str__(self):
+        return json.dumps(self.__dict__)
+
+class MissingRequiredControlParams(Exception):
+    def __init__(self, msg):
+        self.msg = msg

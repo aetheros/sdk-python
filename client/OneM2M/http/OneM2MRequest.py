@@ -5,7 +5,7 @@ import requests, aiohttp, json
 from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
 from client.OneM2M.OneM2MOperation import OneM2MOperation
 from client.OneM2M.http.OneM2MResponse import OneM2MResponse
-from client.OneM2M.OneM2MEntity import OneM2MEntity
+from client.OneM2M.OneM2MResource import OneM2MResource
 from client.exceptions.BaseException import BaseException
 from client.OneM2M.http.HttpHeader import HttpHeader
 
@@ -202,7 +202,7 @@ class OneM2MRequest(OneM2MPrimitive):
             # Avoid key exception on params that map query strings.  Map only existing values.  Ignore any params not
             # explicitly defined as having a http header mapping in the M2M_PARAM_TO_HTTP_HEADER_MAP dict.
             if param in OneM2MPrimitive.M2M_PARAM_TO_HTTP_HEADER_MAP.keys():
-                header[OneM2MPrimitive.M2M_PARAM_TO_HTTP_HEADER_MAP[param]] = value
+                header[OneM2MPrimitive.M2M_PARAM_TO_HTTP_HEADER_MAP[param]] = str(value)
 
         return header
 
@@ -222,7 +222,7 @@ class OneM2MRequest(OneM2MPrimitive):
 
         for param, value in params.items():
             if param in OneM2MRequest.QUERY_STRING_PARAMS and self._validate_query_string_param(param, value): # Throws
-                if to[:-1] != '?':
+                if to[-1] != '?':
                     to += '&'
                 to += '{}={}'.format(param, value)
         
@@ -314,7 +314,7 @@ class OneM2MRequest(OneM2MPrimitive):
            Args:
             to: Host (Overrides 'to' argument set in constructor.)
             params: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
-            content: A OneM2MEntity
+            content: A OneM2MResource
 
            Returns:
             A OneM2MResponse object.
@@ -338,10 +338,12 @@ class OneM2MRequest(OneM2MPrimitive):
         headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON
 
         # Extract entity members as dict.
-        if isinstance(content, OneM2MEntity):
+        if isinstance(content, OneM2MResource):
             # Wrap the entity in a container json object
-            entity_name = content.__class__.__name__.lower()
-            data = {entity_name: content.__dict__}
+            # entity_name = content.__class__.__name__.lower()
+             # @todo raise an ShortNameNotSet (OneM2MResource) expection.
+            entity_name = content.short_name
+            data = {entity_name: content.get_content()}
 
             # Serialize dict. @todo data serialization must be dictated by content-type
             data = json.dumps(data)
@@ -355,13 +357,15 @@ class OneM2MRequest(OneM2MPrimitive):
         # Return a OneM2MResponse instance.
         return OneM2MResponse(http_response)
 
-    def retrieve(self, to=None, params=None):
-        """ Synchronous OneM2M Retrieve request.
+    def update(self, to=None, params=None, short_name=None, key=None, value=None):
+        """ Synchronous OneM2M update request.
         
            Args:
             to: Host (Overrides 'to' argument set in constructor.)
             params: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
-            content: A OneM2MEntity
+            short_name: Short name of the resource type.
+            key: Attribute to update.
+            value: New value of the attribute.
 
            Returns:
             A OneM2MResponse object.
@@ -376,6 +380,50 @@ class OneM2MRequest(OneM2MPrimitive):
         # If params is set to None, check if the instance was initialized with paramters.
         # Raises an RequiredRequestParameterMissingException.
         self._validate_required_params(OneM2MOperation.Create, params)
+
+        # Convert OneM2M request params to headers for HTTP request.
+        headers = self._map_params_to_headers(params)
+
+        # Set the content type for the request.
+        # @todo move this to member with setter function.
+        headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON
+
+        data = {
+            short_name: {
+                key: value
+            }
+        }
+
+        # Serialize dict. @todo data serialization must be dictated by content-type
+        data = json.dumps(data)
+
+            # HTTP POST implied by OneM2M Create Operation (function signature).
+        http_response = requests.put(to, headers=headers, data=data)
+
+        # Return a OneM2MResponse instance.
+        return OneM2MResponse(http_response)
+
+    def retrieve(self, to=None, params=None):
+        """ Synchronous OneM2M Retrieve request.
+        
+           Args:
+            to: Host (Overrides 'to' argument set in constructor.)
+            params: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
+            content: A OneM2MResource
+
+           Returns:
+            A OneM2MResponse object.
+
+           Raises:
+            RequiredRequestParameterMissingException: If a required parameter is not is not included.
+        """
+
+        # Process arguments.
+        to, params = self._resolve_params(to, params)
+
+        # If params is set to None, check if the instance was initialized with paramters.
+        # Raises an RequiredRequestParameterMissingException.
+        self._validate_required_params(OneM2MOperation.Retrieve, params)
 
         # Convert OneM2M request params to headers for HTTP request.
         headers = self._map_params_to_headers(params)
@@ -420,6 +468,9 @@ class OneM2MRequest(OneM2MPrimitive):
 
         # Return a OneM2MResponse instance.
         return OneM2MResponse(http_response)
+
+    def notify(self, to=None, params=None):
+        pass
 
     async def create_async(self, to, params=None, content=None):
         """Asynchronous create (POST) OneM2M request.
