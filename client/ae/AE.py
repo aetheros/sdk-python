@@ -2,7 +2,7 @@
 
 import json
 
-from client.OneM2M.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MResource import OneM2MResource
 
 # TS-0001 9.6.5 Resource Type AE.
 class AE(OneM2MResource):

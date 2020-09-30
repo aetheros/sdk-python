@@ -2,12 +2,12 @@
 
 import requests, aiohttp, json, random
 
-from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
-from client.OneM2M.OneM2MOperation import OneM2MOperation
-from client.OneM2M.http.OneM2MResponse import OneM2MResponse
-from client.OneM2M.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.OneM2MOperation import OneM2MOperation
+from client.onem2m.http.OneM2MResponse import OneM2MResponse
+from client.onem2m.OneM2MResource import OneM2MResource
 from client.exceptions.BaseException import BaseException
-from client.OneM2M.http.HttpHeader import HttpHeader
+from client.onem2m.http.HttpHeader import HttpHeader
 
 class OneM2MRequest(OneM2MPrimitive):
     """OneM2M request primitive to http mapping.

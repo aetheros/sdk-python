@@ -2,10 +2,10 @@
 
 import requests, json
 
-from client.OneM2M.http.HttpHeader import HttpHeader
-from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive, MissingRequiredControlParams
-from client.OneM2M.OneM2MOperation import OneM2MOperation
-from client.OneM2M.OneM2MResource import OneM2MResource
+from client.onem2m.http.HttpHeader import HttpHeader
+from client.onem2m.OneM2MPrimitive import OneM2MPrimitive, MissingRequiredControlParams
+from client.onem2m.OneM2MOperation import OneM2MOperation
+from client.onem2m.OneM2MResource import OneM2MResource
 
 class OneM2MResponse(OneM2MPrimitive):
     # An exception will be thrown if the http_response object from the requests 

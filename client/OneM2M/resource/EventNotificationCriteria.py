@@ -1,4 +1,4 @@
-from client.OneM2M.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MResource import OneM2MResource
 
 class EventNotificationCriteria(OneM2MResource):
     def __init__(self, enc):

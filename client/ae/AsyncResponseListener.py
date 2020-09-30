@@ -3,9 +3,9 @@
 import json, asyncio, threading
 
 from aiohttp import web
-from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 
-from client.OneM2M.http.OneM2MResponse import OneM2MResponse
+from client.onem2m.http.OneM2MResponse import OneM2MResponse
 
 class AsyncResponseListenerFactory():
     """Builds and returns a single instance of AsyncReponseListener.

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from client.OneM2M.OneM2MOperation import OneM2MOperation
-from client.OneM2M.http.HttpHeader import HttpHeader
-from client.OneM2M.http.HttpStatusCode import HttpStatusCode
+from client.onem2m.OneM2MOperation import OneM2MOperation
+from client.onem2m.http.HttpHeader import HttpHeader
+from client.onem2m.http.HttpStatusCode import HttpStatusCode
 
 import json
 

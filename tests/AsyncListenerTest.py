@@ -3,7 +3,7 @@
 import unittest
 import requests
 
-from client.OneM2M.http.OneM2MResponse import OneM2MResponse
+from client.onem2m.http.OneM2MResponse import OneM2MResponse
 # import sys, os
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

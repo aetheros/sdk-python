@@ -3,12 +3,12 @@
 import json, random
 
 from client.ae.AE import AE
-from client.OneM2M.OneM2MResource import OneM2MResource
-from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
-from client.OneM2M.http.OneM2MRequest import OneM2MRequest
-from client.OneM2M.OneM2MOperation import OneM2MOperation
-from client.OneM2M.resource.ContentInstance import ContentInstance as ContentInstance
-from client.OneM2M.resource.Subscription import Subscription
+from client.onem2m.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.http.OneM2MRequest import OneM2MRequest
+from client.onem2m.OneM2MOperation import OneM2MOperation
+from client.onem2m.resource.ContentInstance import ContentInstance as ContentInstance
+from client.onem2m.resource.Subscription import Subscription
 from client.exceptions.InvalidArgumentException import InvalidArgumentException
 
 class CSE():

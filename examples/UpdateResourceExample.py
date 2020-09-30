@@ -3,7 +3,7 @@
 import os, sys, json, time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 from client.cse.CSE import CSE
 from client.ae.AE import AE
 

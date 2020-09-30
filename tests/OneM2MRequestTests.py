@@ -2,9 +2,9 @@
 
 import unittest, asyncio
 
-from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
-from client.OneM2M.http.OneM2MRequest import OneM2MRequest
-from client.OneM2M.OneM2MOperation import OneM2MOperation
+from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.http.OneM2MRequest import OneM2MRequest
+from client.onem2m.OneM2MOperation import OneM2MOperation
 from client.exceptions.InvalidOneM2MOperationException import InvalidOneM2MOperationException
 from client.exceptions.RequiredRequestParameterMissingException import RequiredRequestParameterMissingException
 from client.exceptions.InvalidRequestParameterStructureException import InvalidRequestParameterStructureException

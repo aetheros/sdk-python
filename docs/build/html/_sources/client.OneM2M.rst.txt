@@ -1,29 +1,29 @@
-client.OneM2M package
+client.onem2m package
 =====================
 
 Submodules
 ----------
 
-client.OneM2M.OneM2MOperation module
+client.onem2m.OneM2MOperation module
 ------------------------------------
 
-.. automodule:: client.OneM2M.OneM2MOperation
+.. automodule:: client.onem2m.OneM2MOperation
    :members:
    :undoc-members:
    :show-inheritance:
 
-client.OneM2M.OneM2MPrimitive module
+client.onem2m.OneM2MPrimitive module
 ------------------------------------
 
-.. automodule:: client.OneM2M.OneM2MPrimitive
+.. automodule:: client.onem2m.OneM2MPrimitive
    :members:
    :undoc-members:
    :show-inheritance:
 
-client.OneM2M.OneM2MResource module
+client.onem2m.OneM2MResource module
 -----------------------------------
 
-.. automodule:: client.OneM2M.OneM2MResource
+.. automodule:: client.onem2m.OneM2MResource
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,7 +31,7 @@ client.OneM2M.OneM2MResource module
 Module contents
 ---------------
 
-.. automodule:: client.OneM2M
+.. automodule:: client.onem2m
    :members:
    :undoc-members:
    :show-inheritance:
