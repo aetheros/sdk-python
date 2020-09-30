@@ -3,11 +3,14 @@
 import os, sys, json, time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
 from client.cse.CSE import CSE
 from client.ae.AE import AE
 
 def main():
     try:
+        AE_ID = '1234567890'
+
         # host, port, resource
         CSE_HOST = 'dev9.usw1.aws.corp.grid-net.com'
         CSE_PORT = 21300
@@ -24,22 +27,21 @@ def main():
         req_ae = AE({
             AE.M2M_ATTR_APP_ID: 'N_SB_AE_1',
             AE.M2M_ATTR_APP_NAME: 'N_SB_AE_1',
-            AE.M2M_ATTR_AE_ID: 'N_SB_AE_1',
+            AE.M2M_ATTR_AE_ID: AE_ID,
             AE.M2M_ATTR_POINT_OF_ACCESS: ["http://localhost:7000"]
         })
 
         print('Registering AE "{}" with CSE @ {}'.format(req_ae.aei, CSE_HOST))
 
         # Register ae 
-        ae = pn_cse.register_ae(req_ae)
+        res = pn_cse.register_ae(req_ae)
 
-        # None indicates failed registration.
-        if ae is None:
+        if res.rsc != OneM2MPrimitive.M2M_RSC_CREATED:
             print('Could not register AE\nExiting...')
             sys.exit()
 
         print('AE registration successful:')
-        print(ae)
+        print(res.pc)
 
         # Discover containers.
         print('Discovering containers:')
@@ -60,7 +62,8 @@ def main():
         # Retrieve the content instance.
         print('Retrieving content instance: {}'.format(cin_uri))
         res = pn_cse.retrieve_content_instance(cin_uri)
-        print(res)
+        cin = json.loads(res.pc)['req']['ors']['pc']
+        print(cin)
 
 
     except Exception as err:

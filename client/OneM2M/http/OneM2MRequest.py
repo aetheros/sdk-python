@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import requests, aiohttp, json
+import requests, aiohttp, json, random
 
 from client.OneM2M.OneM2MPrimitive import OneM2MPrimitive
 from client.OneM2M.OneM2MOperation import OneM2MOperation
@@ -135,11 +135,11 @@ class OneM2MRequest(OneM2MPrimitive):
     def _validate_required_params(self, operation=None, params=None):
         """Validates the required parameters (HTTP mapped ones only) for a specified OneM2M operation (Create, Retrieve, ect).
         
-           Args:
+        Args:
             op: The OneM2M operation to validate for.
             params: The request params to validate.
 
-           Raises:
+        Raises:
             RequiredRequestParameterMissingException: If a required parameter is missing.
         """
 
@@ -159,14 +159,14 @@ class OneM2MRequest(OneM2MPrimitive):
     def _validate_query_string_param(self, name, value):
         """Validates query string parameters are valid.
 
-           Args:
+        Args:
             name: The parameter name.
             value: The value of the parameter.
 
-           Return:
+        Return:
              Always True unless preempted by an exception.
 
-           Raises:
+        Raises:
             InvalidOneM2MRequestParameterException: If the parameter name is not valid.
             InvalidOneM2MRequestParameterValueException: If the parameter value is invalid (0..1 || 0..N) @todo
         """
@@ -183,10 +183,10 @@ class OneM2MRequest(OneM2MPrimitive):
             If the submitted argument contains request parameters that DO NOT map to a 
             HTTP header, they will be silently ignored.
 
-           Args:
+        Args:
             params: The OneM2M request parameters to convert to HTTP headers.
 
-           Returns:
+        Returns:
             A dict of HTTP headers and values.
         """
 
@@ -209,11 +209,11 @@ class OneM2MRequest(OneM2MPrimitive):
     def _map_params_to_query_string(self, to, params):
         """Maps OneM2M parameters to their query string representation and appends them to 'to'.
 
-           Args:
+        Args:
             to: The 'to' param
             params: A params dict
 
-           Returns:
+        Returns:
              The 'to' string with the query string arguments appended to it.
         """
 
@@ -238,19 +238,22 @@ class OneM2MRequest(OneM2MPrimitive):
               is found in 'params' or 'params' are None, the member 'to' and 'params' set in the
               constructor are used.
 
-           Args:
+        Args:
             to: The 'to' param
             param: The remaining params
 
-           Returns:
+        Returns:
             The resolved 'to' (string), params (dict).
 
-           Raises:
+        Raises:
             InvalidRequestParameterStructureException: If the params argument is not a dict.
         """
         # Use the params set in the constructor.
         if params is None:
             params = self.params
+
+        # Generate a random request id.
+        params[OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER] = self._generate_rqi()
 
         # Params must be expressed as a dict.
         if isinstance(params, dict) is False:
@@ -276,7 +279,7 @@ class OneM2MRequest(OneM2MPrimitive):
     def _get_all_request_params(self):
         """Aggregates all of the query string and header request params.
 
-            Returns: A list of all param names.
+        Returns: A list of all param names.
         """
         return sum(self.REQUIRED_HTTP_PARAMS.values(), self.QUERY_STRING_PARAMS)
 
@@ -311,15 +314,15 @@ class OneM2MRequest(OneM2MPrimitive):
     def create(self, to=None, params=None, content=None):
         """ Synchronous OneM2M Create request.
         
-           Args:
+        Args:
             to: Host (Overrides 'to' argument set in constructor.)
             params: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
             content: A OneM2MResource
 
-           Returns:
+        Returns:
             A OneM2MResponse object.
 
-           Raises:
+        Raises:
             RequiredRequestParameterMissingException: If a required parameter is not is not included.
         """
 
@@ -360,17 +363,17 @@ class OneM2MRequest(OneM2MPrimitive):
     def update(self, to=None, params=None, short_name=None, key=None, value=None):
         """ Synchronous OneM2M update request.
         
-           Args:
+        Args:
             to: Host (Overrides 'to' argument set in constructor.)
             params: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
             short_name: Short name of the resource type.
             key: Attribute to update.
             value: New value of the attribute.
 
-           Returns:
+        Returns:
             A OneM2MResponse object.
 
-           Raises:
+        Raises:
             RequiredRequestParameterMissingException: If a required parameter is not is not included.
         """
 
@@ -406,15 +409,15 @@ class OneM2MRequest(OneM2MPrimitive):
     def retrieve(self, to=None, params=None):
         """ Synchronous OneM2M Retrieve request.
         
-           Args:
+        Args:
             to: Host (Overrides 'to' argument set in constructor.)
             params: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
             content: A OneM2MResource
 
-           Returns:
+        Returns:
             A OneM2MResponse object.
 
-           Raises:
+        Raises:
             RequiredRequestParameterMissingException: If a required parameter is not is not included.
         """
 
@@ -441,11 +444,11 @@ class OneM2MRequest(OneM2MPrimitive):
     def delete(self, to=None, params=None):
         """ Synchronous OneM2M Delete operation.
         
-           Args:
+        Args:
             to: Host (Overrides 'to' argument set in constructor.)
             param: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
 
-           Returns:
+        Returns:
             A OneM2MResponse object.
         """
 
@@ -474,10 +477,14 @@ class OneM2MRequest(OneM2MPrimitive):
 
     async def create_async(self, to, params=None, content=None):
         """Asynchronous create (POST) OneM2M request.
-        
-        Keyword arguments:
-        argument -- description
-        Return: return_description
+
+        Args:
+            to: Host (Overrides 'to' argument set in constructor.)
+            param: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
+            content: ...
+
+        Returns:
+            A OneM2MResponse object.
         """
         # Ensure form of params.
         if params is not None and isinstance(params, dict) is False:
@@ -491,6 +498,15 @@ class OneM2MRequest(OneM2MPrimitive):
             async with session.get(to) as resp:
                 # Map the client response to the OneM2MResponse.
                 return resp
+
+    def _generate_rqi(self):
+        """Generate a random request id.
+
+        Returns:
+            str: Request id.
+        """
+        return str(random.randrange(1000000,999999999999))
+
 
 class InvalidOneM2MRequestParameterException(BaseException):
     def __init__(self, param):

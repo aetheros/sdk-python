@@ -14,6 +14,13 @@ from client.exceptions.InvalidArgumentException import InvalidArgumentException
 class CSE():
 
     def __init__(self, host, port, rsc):
+        """Constructor
+        
+        Args:
+            host (str): CSE host
+            port (int): CSE port
+            rsc (str): Base resource
+        """
         self.transport_protocol = 'http'
         self.host = host
         self.port = port
@@ -21,16 +28,16 @@ class CSE():
         self.rsc = rsc
 
     def register_ae(self, ae):
-        """ Synchronously register an AE with a Policynet CSE.
+        """Synchronously register an AE with a CSE.
         
-           Args:
-            ae: An instance of AE.
+        Args:
+            ae (AE): The AE to register.
 
-           Returns:
-            An instanc of AE.
+        Returns:
+            OneM2MResponse: The request response.
 
-           Raises:
-            InvalidArgumentException: If the argument is not an AE.
+        Raises:
+            InvalidArgumentException: If the argument is not an AE or a dict containing AE attributes.
         """
         if isinstance(ae, AE) is False:
             raise InvalidArgumentException('AE registration expects an instance AE.')
@@ -42,8 +49,7 @@ class CSE():
         params = {
             OneM2MPrimitive.M2M_PARAM_OPERATION: 'Create', 
             OneM2MPrimitive.M2M_PARAM_TO: to,
-            OneM2MPrimitive.M2M_PARAM_FROM: '1234567890',
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi()
+            OneM2MPrimitive.M2M_PARAM_FROM: ae.aei
         }
 
         # Create a request object
@@ -56,35 +62,32 @@ class CSE():
         # @todo return error msg or object with error msg.
         if oneM2MResponse.rsc == OneM2MPrimitive.M2M_RSC_CREATED:
             self.ae = AE(oneM2MResponse.pc)
-            return self.ae
-        else:
-            return None
+
+        return oneM2MResponse
 
     def discover_containers(self):
-        """ Synchronously discover containers registered with the MN-CSE.
+        """ Synchronously discover containers registered with the CSE.
         
-           Returns: 
-            A list of container resources.
+        Returns:
+            list: A list of container resource URIs or None.
 
-           Raises:
+        Raises:
             InvalidArgumentException: If the argument is not an AE.
         """
         # note: fu (filter usage) parameter required for resource discovery
         to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, self.rsc)
-
 
         # Create a request object
         oneM2MRequest = OneM2MRequest(to)
 
         oneM2MRequest.set_param(OneM2MRequest.M2M_PARAM_FILTER_USAGE, 1)
         oneM2MRequest.set_param(OneM2MRequest.M2M_PARAM_FROM, self.ae.ri)
-        # @todo move to OneM2MRequest class as member with getter - ie. get_request_id() would return the id.
-        oneM2MRequest.set_param(OneM2MRequest.M2M_PARAM_REQUEST_IDENTIFIER, self._generate_rqi())
         oneM2MRequest.set_param(OneM2MRequest.M2M_PARAM_RESOURCE_TYPE, OneM2MResource.M2M_TYPE_CONTAINER) 
 
         # Returns a OneM2MResponse object.  Handle any response code logic here.
         oneM2MResponse = oneM2MRequest.retrieve()
 
+        # Deserialize the primitive container.
         pc = json.loads(oneM2MResponse.pc)
 
         if 'uril' in pc.keys():
@@ -94,28 +97,27 @@ class CSE():
         return None
 
     # @todo add possible rcn values to OneM2MResource class.
-    def create_content_instance(self, rsc, rcn=7):
+    def create_content_instance(self, uri):
         """Create a content instance of a container resource.
 
-           Args:
-            rsc: URI of container resource.
-            rsc: Result content.
+        Args:
+            uri: URI of a container resource.
 
-           Returns:
-            ?
+        Returns:
+            OneM2MResponse: The request response.
         """
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
-        rn = rsc.split('/')[-1]
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
 
+        # Strip leading '/'
+        uri = uri[1:] if uri[0] is '/' else uri
+
+        to = '{}://{}:{}/{}?rcn=3'.format(self.transport_protocol, self.host, self.port, uri)
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, # resource id.
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi(),
-            OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 2,
+            OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 1, # @todo add as function arg.
             OneM2MPrimitive.X_M2M_RTV: 1
         }
         
-        content = ContentInstance(
+        content_instance = ContentInstance(
             {
                 'con': 'default content'
             }
@@ -123,21 +125,26 @@ class CSE():
 
         oneM2MRequest = OneM2MRequest()
 
-        oneM2MResponse = oneM2MRequest.create(to, params, content)
+        oneM2MResponse = oneM2MRequest.create(to, params, content_instance)
 
         return oneM2MResponse
 
-    def retrieve_content_instance(self, rsc, rcn=7):
+    def retrieve_content_instance(self, uri, rcn=7):
         """Retrieves the latest content instance of a container resource.
+
+        Args:
+            uri: URI of a resource.
+
+        Returns:
+            OneM2MResponse: The request response.
         """
         
         # Remove leading slash
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
+        uri = uri[1:] if uri[0] is '/' else uri
+        to = '{}://{}:{}/{}?rcn=3'.format(self.transport_protocol, self.host, self.port, uri)
 
         params = {
-            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, # resource id.
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi(),
+            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, 
             OneM2MRequest.M2M_PARAM_RESULT_CONTENT: ''
         }
 
@@ -145,19 +152,23 @@ class CSE():
 
         oneM2MResponse = oneM2MRequest.retrieve()
 
-        # @todo Return OneM2MResource instance.
-        return oneM2MResponse.pc
+        return oneM2MResponse
 
     def create_subscription(self, rsc, notification_uri):
         """ Create a subscription to a resource.
+
+        Args:
+            uri: URI of a resource.
+
+        Returns:
+            OneM2MResponse: The request response.
         """
 
         rsc = rsc[1:] if rsc[0] is '/' else rsc
         to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
         
         params = {
-            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, # resource id.
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi(),
+            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, 
         }
 
         content = Subscription({'enc': { 'net': [3], 'ty': 4 }, 'nct': 1, 'nu': [notification_uri]})
@@ -169,26 +180,25 @@ class CSE():
         return oneM2MResponse
 
     # @note: not really working.  'la' virtual resource never returns the latest content instance.
-    def retrieve_latest_content_instance(self, rsc):
+    def retrieve_latest_content_instance(self, uri):
         """Retrieve the latest content instance of a container.
 
-           Args:
-            rsc: The container resource URI. 
+        Args:
+            uri: The container resource URI. 
 
-           Returns:
+        Returns:
             An instance of ContentInstance or None if no content instance was found.
 
-           Raises:
-            ?
+        Raises:
+            ...
         """
 
         # Remove leading slash
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
-        to = '{}://{}:{}/{}/la'.format(self.transport_protocol, self.host, self.port, rsc)
+        uri = uri[1:] if uri[0] is '/' else uri
+        to = '{}://{}:{}/{}/la'.format(self.transport_protocol, self.host, self.port, uri)
 
         params = {
-            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, # resource id.
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi()
+            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, 
         }
 
         oneM2MRequest = OneM2MRequest(to, params)
@@ -196,30 +206,29 @@ class CSE():
         oneM2MResponse = oneM2MRequest.retrieve()
 
         # How do you want to handle responses?
-        if oneM2MResponse.rsc == OneM2MPrimitive.M2M_RSC_OK:
+        if oneM2MResponse.uri == OneM2MPrimitive.M2M_RSC_OK:
             return ContentInstance(json.loads(oneM2MResponse.pc)['cin'])
         else:
             return None
 
-    def retrieve_resource(self, rsc, rcn=OneM2MRequest.M2M_RCN_HIERARCHICAL_ADDRESS):
+    def retrieve_resource(self, uri, rcn=OneM2MRequest.M2M_RCN_HIERARCHICAL_ADDRESS):
         """ Synchronous retrieve resource request.
         
-           Args:
-            rsc: The URI of the resource to retrieve.
-            rcn: ?
+        Args:
+            uri: The URI of the resource to retrieve.
+            rcn: 
 
-           Returns:
+        Returns:
             A OneM2MResource object.
         """
 
         # Remove leading '/'
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
+        uri = uri[1:] if uri[0] is '/' else uri
 
-        to = '{}://{}:{}/{}?rcn={}'.format(self.transport_protocol, self.host, self.port, rsc, rcn)
+        to = '{}://{}:{}/{}?rcn={}'.format(self.transport_protocol, self.host, self.port, uri, rcn)
 
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM:  self.ae.ri,
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi()
         }
 
         oneM2MRequest = OneM2MRequest(to, params)
@@ -228,16 +237,24 @@ class CSE():
 
         return oneM2MReponse
 
-    def update_resource(self, rsc, short_name, key, value):
+    def update_resource(self, uri, short_name, key, value):
         """ Update a resource.
+        
+        Args:
+            uri: The URI of the resource to retrieve.
+            short_name:
+            key:
+            value: 
+
+        Returns:
+            OneM2MResponse: The request response.
         """
 
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
+        uri = uri[1:] if uri[0] is '/' else uri
+        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, uri)
         
         params = {
-            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, # resource id.
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi(),
+            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri
         }
 
         oneM2MRequest = OneM2MRequest()
@@ -247,6 +264,11 @@ class CSE():
         return oneM2MResponse
 
     def delete_ae(self):
+        """ Delete ae.
+        
+        Returns:
+            OneM2MResponse: The request response.
+        """
         # Host and resource.
         to = '{}://{}:{}/PN_CSE/{}'.format(self.transport_protocol, self.host, self.port, self.ae.ri)
 
@@ -254,8 +276,7 @@ class CSE():
         params = {
             OneM2MPrimitive.M2M_PARAM_OPERATION: 'Delete', 
             OneM2MPrimitive.M2M_PARAM_TO: 'http://{}:{}/PN_CSE/{}'.format(self.host, self.port, self.ae.ri),
-            OneM2MPrimitive.M2M_PARAM_FROM:  self.ae.ri,
-            OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER: self._generate_rqi()
+            OneM2MPrimitive.M2M_PARAM_FROM:  self.ae.ri
         }
 
         # Create a request object
@@ -264,12 +285,4 @@ class CSE():
         # Returns a OneM2MResponse object.  Handle any response code logic here.
         oneM2MResponse = oneM2MRequest.delete(to, params)
 
-        # Return the AE instance.
-        if oneM2MResponse.rsc == OneM2MPrimitive.M2M_RSC_DELETED:
-            return oneM2MResponse
-        else:
-            return None
-
-    # @todo move to request primitive.
-    def _generate_rqi(self):
-        return str(random.randrange(1000000,999999999999))
+        return oneM2MResponse

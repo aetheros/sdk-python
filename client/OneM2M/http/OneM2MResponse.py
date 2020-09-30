@@ -46,7 +46,10 @@ class OneM2MResponse(OneM2MPrimitive):
     ]
 
     def __init__(self, http_response):
-        """Converts http response message to onem2m response primitive.
+        """Converts HTTP response message to onem2m response primitive.
+        
+        Args:
+            http_response: requests response instance.
         """
 
         # Map headers to parameters.
@@ -60,7 +63,8 @@ class OneM2MResponse(OneM2MPrimitive):
         """Converts HTTP headers onem2m2 response primitive params and stores them
            instance members.
 
-           raises MissingRequiredControlParams
+        Raises:
+            MissingRequiredControlParams: If required params from control section are missing.
         """
 
         # Filter out unsupported headers and convert them to their corresponding onem2m param.

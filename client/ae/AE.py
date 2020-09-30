@@ -21,7 +21,9 @@ class AE(OneM2MResource):
     
     def __init__(self, args):
         """Constructor
-            Expects a dictionary representation of an AE to generate members.
+
+        Args:
+            args (str|dict): JSON string representation of an ae or dict representation of an ae.
         """
 
         # Resource short name.
@@ -54,7 +56,13 @@ class AE(OneM2MResource):
         return json.dumps(self.__dict__)
         
     def _validate_attributes(self, ae):
-        """ Validates attribute.
+        """Synchronously register an AE with a CSE.
+        
+        Args:
+            ae (AE): The AE to register.
+
+        Raises:
+            MissingRequiredAttibuteError: If the AE is intialized without a required attribute.
         """
         ae_attributes = list(ae.keys())
 
@@ -63,7 +71,5 @@ class AE(OneM2MResource):
                 raise MissingRequiredAttibuteError('Missing required attribute in AE: "{}"'.format(req_attr))
 
 class MissingRequiredAttibuteError(Exception):
-    """
-    """
     def __init__(self, msg):
         self.message = msg
