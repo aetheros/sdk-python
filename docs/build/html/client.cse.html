@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="python3.7" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>client.cse package &mdash; OneM2MHTTPClient 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> OneM2MHTTPClient
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">client.cse package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-client.cse.CSE">client.cse.CSE module</a></li>
+<li><a class="reference internal" href="#module-client.cse">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OneM2MHTTPClient</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>client.cse package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/client.cse.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="client-cse-package">
+<h1>client.cse package<a class="headerlink" href="#client-cse-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-client.cse.CSE">
+<span id="client-cse-cse-module"></span><h2>client.cse.CSE module<a class="headerlink" href="#module-client.cse.CSE" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="client.cse.CSE.CSE">
+<em class="property">class </em><code class="sig-prename descclassname">client.cse.CSE.</code><code class="sig-name descname">CSE</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em>, <em class="sig-param"><span class="n">port</span></em>, <em class="sig-param"><span class="n">rsc</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.create_content_instance">
+<code class="sig-name descname">create_content_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.create_content_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a content instance of a container resource.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>uri: URI of a container resource.</p>
+</dd>
+<dt>Returns:</dt><dd><p>OneM2MResponse: The request response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.create_subscription">
+<code class="sig-name descname">create_subscription</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rsc</span></em>, <em class="sig-param"><span class="n">notification_uri</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.create_subscription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a subscription to a resource.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>uri: URI of a resource.</p>
+</dd>
+<dt>Returns:</dt><dd><p>OneM2MResponse: The request response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.delete_ae">
+<code class="sig-name descname">delete_ae</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.delete_ae" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete ae.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>OneM2MResponse: The request response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.discover_containers">
+<code class="sig-name descname">discover_containers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.discover_containers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronously discover containers registered with the CSE.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list: A list of container resource URIs or None.</p>
+</dd>
+<dt>Raises:</dt><dd><p>InvalidArgumentException: If the argument is not an AE.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.register_ae">
+<code class="sig-name descname">register_ae</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ae</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.register_ae" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronously register an AE with a CSE.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ae (AE): The AE to register.</p>
+</dd>
+<dt>Returns:</dt><dd><p>OneM2MResponse: The request response.</p>
+</dd>
+<dt>Raises:</dt><dd><p>InvalidArgumentException: If the argument is not an AE or a dict containing AE attributes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.retrieve_content_instance">
+<code class="sig-name descname">retrieve_content_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">rcn</span><span class="o">=</span><span class="default_value">7</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.retrieve_content_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the latest content instance of a container resource.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>uri: URI of a resource.</p>
+</dd>
+<dt>Returns:</dt><dd><p>OneM2MResponse: The request response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.retrieve_latest_content_instance">
+<code class="sig-name descname">retrieve_latest_content_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.retrieve_latest_content_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the latest content instance of a container.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>uri: The container resource URI.</p>
+</dd>
+<dt>Returns:</dt><dd><p>An instance of ContentInstance or None if no content instance was found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>...</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.retrieve_resource">
+<code class="sig-name descname">retrieve_resource</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">rcn</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.retrieve_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronous retrieve resource request.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>uri: The URI of the resource to retrieve.
+rcn:</p>
+</dd>
+<dt>Returns:</dt><dd><p>A OneM2MResource object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="client.cse.CSE.CSE.update_resource">
+<code class="sig-name descname">update_resource</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">short_name</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#client.cse.CSE.CSE.update_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a resource.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>uri: The URI of the resource to retrieve.
+short_name:
+key:
+value:</p>
+</dd>
+<dt>Returns:</dt><dd><p>OneM2MResponse: The request response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-client.cse">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-client.cse" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Aetheros
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

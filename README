@@ -11,3 +11,12 @@ python -m unittest tests/CSETests.py
 
 ## Style Guide
 https://google.github.io/styleguide/pyguide.html
+
+## Documentation
+https://www.sphinx-doc.org/en/master/
+
+
+
+### Generating documentation
+From docs/
+make html
