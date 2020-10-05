@@ -1,7 +1,7 @@
 ## Virtual Env.
-`virtualenv -p /usr/bin/python3.7 virtenv`
-`source virtenv/bin/activate`
-`python --version`
+`virtualenv -p /usr/bin/python3.7 virtenv
+source virtenv/bin/activate
+python --version`
 
 ## Install Dependencies
 `pip install -r requirements.txt`
@@ -18,8 +18,8 @@ https://www.sphinx-doc.org/en/master/
 ### Generating documentation
 From docs/
 
-### Add any new modules.
+#### Add any new modules.
 `sphinx-apidoc -o source/ ../client` 
 
-### Build documentation.
+#### Build documentation.
 `make html`
