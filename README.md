@@ -18,8 +18,8 @@ https://www.sphinx-doc.org/en/master/
 ### Generating documentation
 From docs/
 
-# Add any new modules.
+### Add any new modules.
 `sphinx-apidoc -o source/ ../client` 
 
-# Build documentation.
+### Build documentation.
 `make html`
