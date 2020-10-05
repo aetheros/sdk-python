@@ -1,7 +1,9 @@
 ## Virtual Env.
-```virtualenv -p /usr/bin/python3.7 virtenv
+```python
+virtualenv -p /usr/bin/python3.7 virtenv
 source virtenv/bin/activate
-python --version```
+python --version
+```
 
 ## Install Dependencies
 `pip install -r requirements.txt`
