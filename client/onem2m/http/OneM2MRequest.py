@@ -360,15 +360,13 @@ class OneM2MRequest(OneM2MPrimitive):
         # Return a OneM2MResponse instance.
         return OneM2MResponse(http_response)
 
-    def update(self, to=None, params=None, short_name=None, key=None, value=None):
+    def update(self, to=None, params=None, content=None):
         """ Synchronous OneM2M update request.
         
         Args:
             to: Host (Overrides 'to' argument set in constructor.)
             params: Dict of OneM2MParams (Overrides 'params' argument set in constructor.)
-            short_name: Short name of the resource type.
-            key: Attribute to update.
-            value: New value of the attribute.
+            content: A OneM2MResource
 
         Returns:
             A OneM2MResponse object.
@@ -391,20 +389,22 @@ class OneM2MRequest(OneM2MPrimitive):
         # @todo move this to member with setter function.
         headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON
 
-        data = {
-            short_name: {
-                key: value
-            }
-        }
 
-        # Serialize dict. @todo data serialization must be dictated by content-type
-        data = json.dumps(data)
+        # Extract entity members as dict.
+        if isinstance(content, OneM2MResource):
+            entity_name = content.short_name
+            data = {entity_name: content.get_content()}
 
-            # HTTP POST implied by OneM2M Create Operation (function signature).
-        http_response = requests.put(to, headers=headers, data=data)
+            # Serialize dict. @todo data serialization must be dictated by content-type
+            data = json.dumps(data)
 
-        # Return a OneM2MResponse instance.
-        return OneM2MResponse(http_response)
+                # HTTP POST implied by OneM2M Create Operation (function signature).
+            http_response = requests.put(to, headers=headers, data=data)
+
+            # Return a OneM2MResponse instance.
+            return OneM2MResponse(http_response)
+        else:
+            raise Exception('Update must be an instance of OneM2MResource')
 
     def retrieve(self, to=None, params=None):
         """ Synchronous OneM2M Retrieve request.

@@ -4,6 +4,7 @@ import os, sys, json, time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.resource.Subscription import Subscription
 from client.cse.CSE import CSE
 from client.ae.AE import AE
 
@@ -58,13 +59,23 @@ def main():
 
         print('Retrieving subscription: {}'.format(sub_res.cn))
         res = pn_cse.retrieve_resource(sub_res.cn)
-        print(json.loads(res.pc))
+        # Use the returned subscription resource as update target.
+        res_sub_dict = json.loads(res.pc)['sub']
+
+        update_sub_dict = {}
+        # Strip non-updatable attributes.
+        for k,v in res_sub_dict.items():
+            if k not in('ct','lt','pi','ri','rn','ty'):
+                update_sub_dict[k] = v
+
+        
+        sub = Subscription(update_sub_dict)
+        print(sub)
 
         print('Updating subscription resource: {}'.format(sub_res.cn))
-        res = pn_cse.update_resource(sub_res.cn, 'sub', 'enc',
-        "{'enc': { 'net': [4], 'ty': 5 }, 'nct': 1, 'nu': [notification_uri]}"
-        )
-        print(res)
+        sub.nu = ['0.0.0.0']
+        res = pn_cse.update_resource(sub_res.cn, sub)
+        print(json.loads(res.rsc))
 
         print('Retrieving subscription: {}'.format(sub_res.cn))
         res = pn_cse.retrieve_resource(sub_res.cn)

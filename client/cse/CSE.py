@@ -237,7 +237,7 @@ class CSE():
 
         return oneM2MReponse
 
-    def update_resource(self, uri, short_name, key, value):
+    def update_resource(self, uri, resource):
         """ Update a resource.
         
         Args:
@@ -259,7 +259,7 @@ class CSE():
 
         oneM2MRequest = OneM2MRequest()
 
-        oneM2MResponse = oneM2MRequest.update(to, params, short_name, key, value)
+        oneM2MResponse = oneM2MRequest.update(to, params, resource)
 
         return oneM2MResponse
 
