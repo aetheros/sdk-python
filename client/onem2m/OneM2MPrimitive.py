@@ -36,6 +36,10 @@ class OneM2MPrimitive():
     M2M_PARAM_CONTENT = 'cn'
     M2M_PARAM_RESOURCE_TYPE = 'rqt'
     M2M_PARAM_RESPONSE_STATUS_CODE= 'rsc'
+    M2M_PARAM_AE_ID = 'aei'
+    M2M_PARAM_APP_ID = 'api'
+    M2M_PARAM_APP_NAME = 'apn'
+    M2M_PARAM_POINT_OF_ACCESS= 'poa'
 
     # Query string request parameters.
     # M2M_PARAM_RESPONSE_TYPE = 'rt'

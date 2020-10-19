@@ -16,7 +16,9 @@ class AE(OneM2MResource):
 
     # Attributes that must be defined in each instance.
     REQUIRED_ATTRIBUTES = [
-        M2M_ATTR_AE_ID
+        M2M_ATTR_APP_ID,
+        M2M_ATTR_AE_ID,
+        M2M_ATTR_POINT_OF_ACCESS
     ]
     
     def __init__(self, args):

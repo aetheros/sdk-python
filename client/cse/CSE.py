@@ -43,14 +43,19 @@ class CSE():
             raise InvalidArgumentException('AE registration expects an instance AE.')
 
         # Host and resource.
-        to = '{}://{}:{}/PN_CSE?rcn=0'.format(self.transport_protocol, self.host, self.port)
+        to = '{}://{}:{}/PN_CSE'.format(self.transport_protocol, self.host, self.port)
 
         # op is not required as it is implied by the function that the params will be passed to.
         params = {
             OneM2MPrimitive.M2M_PARAM_OPERATION: 'Create', 
             OneM2MPrimitive.M2M_PARAM_TO: to,
-            OneM2MPrimitive.M2M_PARAM_FROM: ae.aei
+            OneM2MPrimitive.M2M_PARAM_FROM: ae.aei  # This must be removed from the object sent in the request body.
         }
+
+        # Only the request header 'from' needed the default aei for registration.
+        # Remove it from the request body ae object or the cse will return the 
+        # same ae id instead of a new one.
+        ae.__dict__.pop(OneM2MPrimitive.M2M_PARAM_AE_ID)
 
         # Create a request object
         oneM2MRequest = OneM2MRequest()
