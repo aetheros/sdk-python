@@ -50,6 +50,21 @@ class OneM2MPrimitive():
 
     # @todo add remaining from TS-0009 Table 6.2.2.2-1 
 
+    M2M_HTTP_HEADERS = [
+        X_M2M_ORIGIN,
+        X_M2M_RI,
+        X_M2M_GID,
+        X_M2M_RTU,
+        X_M2M_RTV,
+        X_M2M_OT,
+        X_M2M_RST,
+        X_M2M_RET,
+        X_M2M_OET,
+        X_M2M_EC,
+        X_M2M_RSC,
+        X_M2M_ATI
+    ]
+
     # OneM2M Parameter to HTTP Header Map.
     M2M_PARAM_TO_HTTP_HEADER_MAP = {
         M2M_PARAM_TO: HttpHeader.URI,

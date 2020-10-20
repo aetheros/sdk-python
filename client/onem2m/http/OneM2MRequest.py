@@ -225,7 +225,7 @@ class OneM2MRequest(OneM2MPrimitive):
         to = to.split('?')[0] + '?'
 
         for param, value in params.items():
-            if param in OneM2MRequest.QUERY_STRING_PARAMS and self._validate_query_string_param(param, value): # Throws
+            if param not in OneM2MPrimitive.M2M_PARAM_TO_HTTP_HEADER_MAP.keys():
                 if to[-1] != '?':
                     to += '&'
                 to += '{}={}'.format(param, value)

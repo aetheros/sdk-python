@@ -47,7 +47,6 @@ class CSE():
 
         # op is not required as it is implied by the function that the params will be passed to.
         params = {
-            OneM2MPrimitive.M2M_PARAM_OPERATION: 'Create', 
             OneM2MPrimitive.M2M_PARAM_TO: to,
             OneM2MPrimitive.M2M_PARAM_FROM: ae.aei  # The AE-Credential-ID needs to be removed from the ae object
         }
@@ -72,7 +71,7 @@ class CSE():
         """ Synchronously discover containers registered with the CSE.
         
         Returns:
-            list: A list of container resource URIs or None.
+            list: A list of container resouce URIs or None.
 
         Raises:
             InvalidArgumentException: If the argument is not an AE.
@@ -167,7 +166,6 @@ class CSE():
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, 
             OneM2MPrimitive.M2M_PARAM_FILTER_USAGE: 1,
             OneM2MPrimitive.M2M_PARAM_RESOURCE_TYPE: 23,
-            # OneM2MRequest.M2M_PARAM_RN: rn
         }
 
         oneM2MRequest = OneM2MRequest(to, params)
@@ -294,7 +292,6 @@ class CSE():
 
         # op is not required as it is implied by the function that the params will be passed to.
         params = {
-            OneM2MPrimitive.M2M_PARAM_OPERATION: 'Delete', 
             OneM2MPrimitive.M2M_PARAM_TO: to,
             OneM2MPrimitive.M2M_PARAM_FROM:  self.ae.ri
         }
@@ -319,7 +316,6 @@ class CSE():
 
         # op is not required as it is implied by the function that the params will be passed to.
         params = {
-            OneM2MPrimitive.M2M_PARAM_OPERATION: 'Delete', 
             OneM2MPrimitive.M2M_PARAM_TO: to,
             OneM2MPrimitive.M2M_PARAM_FROM:  self.ae.ri
         }
