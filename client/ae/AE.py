@@ -3,6 +3,7 @@
 import json
 
 from client.onem2m.OneM2MResource import OneM2MResource
+from client.ae.AsyncResponseListener import AsyncResponseListenerFactory
 
 # TS-0001 9.6.5 Resource Type AE.
 class AE(OneM2MResource):
@@ -47,6 +48,8 @@ class AE(OneM2MResource):
         self._validate_attributes(ae)
         self.__dict__ = ae
 
+        self.async_response_handler = None
+
     def __str__(self):
         """Print string repr when print is called on object.
         """
@@ -71,6 +74,12 @@ class AE(OneM2MResource):
         for req_attr in self.REQUIRED_ATTRIBUTES:
             if req_attr not in ae_attributes:
                 raise MissingRequiredAttibuteError('Missing required attribute in AE: "{}"'.format(req_attr))
+
+    def get_async_response_handler(self, host, port):
+        f1 = AsyncResponseListenerFactory(host, port)
+        i = f1.get_instance()
+
+        return i
 
 class MissingRequiredAttibuteError(Exception):
     def __init__(self, msg):

@@ -61,6 +61,7 @@ def main():
         res = pn_cse.retrieve_resource(sub_res.cn)
         # Use the returned subscription resource as update target.
         res_sub_dict = json.loads(res.pc)['sub']
+        # print(res_sub_dict)
 
         update_sub_dict = {}
         # Strip non-updatable attributes.
@@ -70,12 +71,15 @@ def main():
 
         
         sub = Subscription(update_sub_dict)
-        print(sub)
+        # sub = Subscription(res_sub_dict)
+        # print(sub)
 
         print('Updating subscription resource: {}'.format(sub_res.cn))
-        sub.nu = ['0.0.0.0']
+        # sub.nu = ['0.0.0.0']
+        sub.ct = ''
         res = pn_cse.update_resource(sub_res.cn, sub)
         print(json.loads(res.rsc))
+        print(json.loads(res.pc))
 
         print('Retrieving subscription: {}'.format(sub_res.cn))
         res = pn_cse.retrieve_resource(sub_res.cn)

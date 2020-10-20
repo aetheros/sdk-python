@@ -13,7 +13,9 @@ class OneM2MResponse(OneM2MPrimitive):
     # @todo add remaining params.
     REQUIRED_PARAMS = {
         OneM2MPrimitive.CONTROL: [
-            OneM2MPrimitive.M2M_PARAM_RESPONSE_STATUS_CODE,   # 'rsc' in header
+            OneM2MPrimitive.X_M2M_ORIGIN,
+            OneM2MPrimitive.X_M2M_RI,
+            OneM2MPrimitive.X_M2M_RSC,
         ],
         OneM2MPrimitive.CONTENT: [
             OneM2MResource.M2M_ATTR_PRIMITIVE_CONTENT,  # 'pc' in body
@@ -67,21 +69,20 @@ class OneM2MResponse(OneM2MPrimitive):
             MissingRequiredControlParams: If required params from control section are missing.
         """
 
-        # Filter out unsupported headers and convert them to their corresponding onem2m param.
-        # @note returns a list of tuples ('param': 'value')
-        # @todo refactor tuples into OneM2MParam class instances.
-        onem2m_params = { self.HTTP_HEADER_M2M_PARAM_TO_MAP[h]:v for h,v in headers.items() if h in self.SUPPORTED_HEADERS }
-        onem2m_param_keys = (param for param in onem2m_params)
-
         # Ensure all required control params were included.
         missing_control_params = []
 
         for required_param in self.REQUIRED_PARAMS[OneM2MPrimitive.CONTROL]:
-            if required_param not in onem2m_param_keys: 
+            if required_param not in headers.keys(): 
                 missing_control_params.append(required_param)
 
         if len(missing_control_params):
             raise MissingRequiredControlParams('On2M2M Response Primitive Missing required control param(s) {}'.format(missing_control_params))
+
+        # Filter out unsupported headers and convert them to their corresponding onem2m param.
+        # @note returns a list of tuples ('param': 'value')
+        # @todo refactor tuples into OneM2MParam class instances.
+        onem2m_params = { self.HTTP_HEADER_M2M_PARAM_TO_MAP[h]:v for h,v in headers.items() if h in self.SUPPORTED_HEADERS }
 
         # Store the params as instance members.
         self.__dict__ = onem2m_params

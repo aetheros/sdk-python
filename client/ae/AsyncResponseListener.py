@@ -41,6 +41,7 @@ class AsyncResponseListenerFactory():
             # Server host and port.
             self.host = host
             self.port = port
+            self.daemon = True # Kill thread when main exists.
 
             self.runner = None
 
@@ -51,8 +52,6 @@ class AsyncResponseListenerFactory():
             """Build the async response server.
             """
 
-            print('Starting async server on {}:{}'.format(self.host, self.port))
-
             # Initialize the server.
             server = web.Application()
 
@@ -60,8 +59,8 @@ class AsyncResponseListenerFactory():
             server.add_routes([
                 web.get('/', self._handler),
                 web.post('/', self._handler),
-                web.get('/{rqi}', self._handler),
-                web.post('/{rqi}', self._handler)
+                web.get('/notify', self._handler),
+                web.post('/notify', self._handler)
                 ])
 
             # Start the server.
@@ -98,10 +97,11 @@ class AsyncResponseListenerFactory():
 
             if request_id in self.rqi_cb_map.keys():
                 # Execute callback and pass it the req.
-                await self.rqi_cb_map[request_id](req, res)
+                return await self.rqi_cb_map[request_id](req, res)
             else:
                 # No handler has been registed for this request id.
                 res.set_status(4004)
+                res.body = 'No response handler has been set for this rqi.'
 
             return res
 

@@ -34,7 +34,7 @@ class OneM2MPrimitive():
     M2M_PARAM_OPERATION = 'op'
     M2M_PARAM_REQUEST_IDENTIFIER = 'rqi'
     M2M_PARAM_CONTENT = 'cn'
-    M2M_PARAM_RESOURCE_TYPE = 'rqt'
+    # M2M_PARAM_RESOURCE_TYPE = 'rqt'
     M2M_PARAM_RESPONSE_STATUS_CODE= 'rsc'
     M2M_PARAM_AE_ID = 'aei'
     M2M_PARAM_APP_ID = 'api'
@@ -44,7 +44,10 @@ class OneM2MPrimitive():
     # Query string request parameters.
     # M2M_PARAM_RESPONSE_TYPE = 'rt'
     # M2M_PARAM_RESULT_PERSISTENCE = 'rp'
-    # M2M_PARAM_RESULT_CONTENT = 'rcn'
+    M2M_PARAM_RESULT_CONTENT = 'rcn'
+    M2M_PARAM_FILTER_USAGE = 'fu'
+    M2M_PARAM_RESOURCE_TYPE = 'ty'
+
     # @todo add remaining from TS-0009 Table 6.2.2.2-1 
 
     # OneM2M Parameter to HTTP Header Map.
@@ -53,8 +56,8 @@ class OneM2MPrimitive():
         M2M_PARAM_OPERATION: HttpHeader.METHOD,
         M2M_PARAM_FROM: X_M2M_ORIGIN,
         M2M_PARAM_REQUEST_IDENTIFIER: X_M2M_RI,
-        X_M2M_RTV: X_M2M_RTV,        
-        X_M2M_RTU: X_M2M_RTU        
+        # X_M2M_RTV: X_M2M_RTV,        
+        # X_M2M_RTU: X_M2M_RTU        
     }
 
     # HTTP Header to OneM2M Parameter Map.
