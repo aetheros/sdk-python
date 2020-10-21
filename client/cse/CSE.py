@@ -67,6 +67,28 @@ class CSE():
 
         return oneM2MResponse
 
+
+    def get_ae(self, ae_id):
+
+        # Host and resource.
+        to = '{}://{}:{}/PN_CSE/{}'.format(self.transport_protocol, self.host, self.port, ae_id)
+
+        params = {
+            OneM2MPrimitive.M2M_PARAM_FROM: ae_id
+        }
+
+        # Create a request object
+        oneM2MRequest = OneM2MRequest()
+
+        oneM2MResponse = oneM2MRequest.retrieve(to, params)
+
+        if oneM2MResponse.rsc == OneM2MPrimitive.M2M_RSC_OK:
+            self.ae = AE(oneM2MResponse.pc)
+
+        return oneM2MResponse
+
+
+
     def discover_containers(self):
         """ Synchronously discover containers registered with the CSE.
         
@@ -77,7 +99,7 @@ class CSE():
             InvalidArgumentException: If the argument is not an AE.
         """
         # note: fu (filter usage) parameter required for resource discovery
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, self.rsc)
+        to = self.get_to(self.rsc)
 
         # Create a request object
         oneM2MRequest = OneM2MRequest(to)
@@ -105,7 +127,7 @@ class CSE():
         # Strip leading '/'
         uri = uri[1:] if uri[0] is '/' else uri
 
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, uri)
+        to = self.get_to(uri)
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, # resource id.
             OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 1, # @todo add as function arg.
@@ -135,10 +157,7 @@ class CSE():
             OneM2MResponse: The request response.
         """
         
-        # Remove leading slash
-        uri = uri[1:] if uri[0] is '/' else uri
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, uri)
-
+        to = self.get_to(uri)
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, 
             OneM2MRequest.M2M_PARAM_RESULT_CONTENT: '',
@@ -151,7 +170,12 @@ class CSE():
 
         return oneM2MResponse
 
-    def check_existing_subscriptions(self, rsc):
+    def get_to(self, rsc):
+        rsc = rsc[1:] if rsc[0] == '/' else rsc
+        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
+        return to
+
+    def check_existing_subscriptions(self, rsc, subscription_name):
         """ Retrieve all existing subscriptions on a resource
         Args:
             uri: URI of a resource.
@@ -159,9 +183,7 @@ class CSE():
         Returns:
             OneM2MResponse: The request response.
         """
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
-
+        to = self.get_to(rsc)
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, 
             OneM2MPrimitive.M2M_PARAM_FILTER_USAGE: 1,
@@ -172,7 +194,7 @@ class CSE():
 
         return oneM2MRequest.retrieve()
 
-    def create_subscription(self, rsc, sub_name, notification_uri):
+    def create_subscription(self, rsc, sub_name, notification_uri, event_types = [3], result_content = None):
         """ Create a subscription to a resource.
 
         Args:
@@ -182,14 +204,13 @@ class CSE():
             OneM2MResponse: The request response.
         """
 
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
-        
+        to = self.get_to(rsc)
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri, 
+            OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: result_content
         }
 
-        content = Subscription({'enc': { 'net': [3], 'ty': 4 }, 'nct': 1, 'nu': [notification_uri], 'rn': sub_name})
+        content = Subscription({'enc': { 'net': event_types, 'ty': 4 }, 'nct': 1, 'nu': [notification_uri], 'rn': sub_name})
 
         oneM2MRequest = OneM2MRequest()
 
@@ -239,11 +260,7 @@ class CSE():
             A OneM2MResource object.
         """
 
-        # Remove leading '/'
-        uri = uri[1:] if uri[0] is '/' else uri
-
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, uri)
-
+        to = self.get_to(uri)
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM:  self.ae.ri,
             OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: OneM2MRequest.M2M_RCN_CHILD_RESOURCE_REFERENCES
@@ -268,9 +285,8 @@ class CSE():
             OneM2MResponse: The request response.
         """
 
-        uri = uri[1:] if uri[0] is '/' else uri
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, uri)
-        
+        to = self.get_to(resource)
+       
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri
         }
@@ -311,8 +327,7 @@ class CSE():
             OneM2MResponse: The request response.
         """
         # Host and resource.
-        rsc = rsc[1:] if rsc[0] is '/' else rsc
-        to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
+        to = self.get_to(rsc)
 
         # op is not required as it is implied by the function that the params will be passed to.
         params = {
