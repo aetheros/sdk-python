@@ -91,7 +91,8 @@ class AsyncResponseListenerFactory():
 
         async def _handler(self, req):
             request_method = req.method
-            request_id = req.headers[OneM2MPrimitive.X_M2M_RI]
+            body = await req.json()
+            request_id = body['sgn']['sur']
 
             res = web.Response(content_type=OneM2MPrimitive.CONTENT_TYPE_JSON)
 

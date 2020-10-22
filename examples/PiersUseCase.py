@@ -1,14 +1,16 @@
 
-import os, sys, json, time
+import os, sys, json, time, re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.http.OneM2MRequest import OneM2MRequest
 from client.cse.CSE import CSE
 from client.ae.AE import AE
 from client.ae.AsyncResponseListener import AsyncResponseListenerFactory
 
-NOTIFICATION_SERVER_IP = '10.250.10.121'
-NOTIFICATION_SERVER_PORT = 8080
+NOTIFICATION_SERVER_IP = '0.0.0.0'
+NOTIFICATION_SERVER_PORT = 44346
 
 #
 # Work flow:
@@ -23,24 +25,37 @@ NOTIFICATION_SERVER_PORT = 8080
 def main():
     try:
         # Credentials from UI registration process.
-        app_id = 'N_SB_AE_2'
-        ae_credential_id = '5LKNUGX7OV27BMMR'
+        ae_id = 'C6ab15897000001'
+        app_id = 'Nlco-example'
+        ae_credential_id = 'VGZQ7ZDCJEH3XEJD'
 
-        print('Registering new AE with {}'.format(app_id))
+        # TODO: don't keep registering duplicate AEs
 
-        cse = CSE('dev9.usw1.aws.corp.grid-net.com', 21300, 'PN_CSE')
-            
-        ae_reg_response = cse.register_ae(
-            AE({
-                OneM2MPrimitive.M2M_PARAM_APP_ID: app_id,
-                OneM2MPrimitive.M2M_PARAM_AE_ID: ae_credential_id,
-                OneM2MPrimitive.M2M_PARAM_POINT_OF_ACCESS: ['{}:{}/notify'.format(NOTIFICATION_SERVER_IP, NOTIFICATION_SERVER_PORT)]
-            })
-        )
+        poa = 'http://10.0.2.2:44346/notify'
 
-        print('Response code: {}'.format(ae_reg_response.rsc))
-        print('Response body:\n{}'.format(ae_reg_response.pc))
-        print('\n===============================\n')
+        cse = CSE('piersh-m2m.corp.grid-net.com', 21300, 'PN_CSE')
+
+        ae = cse.get_ae(ae_id) if ae_id else None
+
+        if not ae:
+
+            print('Registering new AE with {}'.format(app_id))
+
+            ae_reg_response = cse.register_ae(
+                AE({
+                    OneM2MPrimitive.M2M_PARAM_APP_ID: app_id,
+                    OneM2MPrimitive.M2M_PARAM_AE_ID: ae_credential_id,
+                    OneM2MPrimitive.M2M_PARAM_POINT_OF_ACCESS: [poa]
+                })
+            )
+
+            print('Response code: {}'.format(ae_reg_response.rsc))
+            print('Response body:\n{}'.format(ae_reg_response.pc))
+            print('\n===============================\n')
+
+
+        print('Using AE with ID {}'.format(cse.ae.aei))
+
 
         print('Discovering existing nodes')
         discover_response = cse.discover_containers()
@@ -48,42 +63,54 @@ def main():
         print('Response body:\n{}'.format(discover_response.pc))
         print('\n===============================\n')
 
-        # Pick a random container.
-        container = json.loads(discover_response.pc)['uril'][0]
 
-        print('Using container {}'.format(container))
-        create_sub_response = cse.retrieve_resource(container)
-        print('Response code: {}'.format(create_sub_response.rsc))
-        print('Response body:\n{}'.format(create_sub_response.pc))
+        # Pick a random container.
+        nodes = json.loads(discover_response.pc)['uril']
+        node = next(x for x in nodes if re.match(r'.*/nod-[0-9]{15}$', x))
+
+
+        print('Using node {}'.format(node))
+        retrieve_node_children = cse.retrieve_resource(node)
+        print('Response code: {}'.format(retrieve_node_children.rsc))
+        print('Response body:\n{}'.format(retrieve_node_children.pc))
+
+        node_children = json.loads(retrieve_node_children.pc)['rrl']['ch']
+        lcoi_url = next(x['val'] for x in node_children if x['nm'] == 'lcoi')
         
         sub_name = 'sbabb-test-sub-1'
 
         print('\n===============================\n')
-        print('Creating subscription {} subscriptions on {}'.format(sub_name, container))
-        create_sub_response = cse.create_subscription(container, sub_name, '/notify')
-        print('Response code: {}'.format(create_sub_response.rsc))
-        print('Request ID: {}'.format(create_sub_response.rqi))
-        print('Response body:\n{}'.format(create_sub_response.pc))
-
-        print('\n===============================\n')
-        print('Checking for subscriptions on {}'.format(container))
-        retrieve_sub_response = cse.check_existing_subscriptions(container)
+        print('Checking for subscriptions on {}'.format(lcoi_url))
+        #retrieve_sub_response = cse.check_existing_subscriptions(lcoi_url)
+        retrieve_sub_response = oneM2MRequest = OneM2MRequest(cse.get_to(lcoi_url), {
+            OneM2MPrimitive.M2M_PARAM_FROM: cse.ae.ri, 
+            OneM2MPrimitive.M2M_PARAM_FILTER_USAGE: 1,
+            OneM2MPrimitive.M2M_PARAM_RESOURCE_TYPE: 23,
+            'rn': sub_name
+        }).retrieve()
         print('Response code: {}'.format(retrieve_sub_response.rsc))
         print('Response body:\n{}'.format(retrieve_sub_response.pc))
 
-        print('\n===============================\n')
-        print('Starting async response server on http://{}:{}'.format(NOTIFICATION_SERVER_IP, NOTIFICATION_SERVER_PORT))
-        print('\n===============================')
-        print('POST requests to "http://{}:{}/notify" with header "X-M2M-RI: {}"'.format(NOTIFICATION_SERVER_IP, NOTIFICATION_SERVER_PORT, create_sub_response.rqi))
-        print('===============================')
-        async_response_handler = cse.ae.get_async_response_handler(NOTIFICATION_SERVER_IP, NOTIFICATION_SERVER_PORT)
-        async_response_handler.start()
+        existing_subscriptions = json.loads(retrieve_sub_response.pc)['uril']
+
+        if existing_subscriptions and len(existing_subscriptions) > 0:
+            existing_subscription = existing_subscriptions[0]
+        else:
+            print('\n===============================\n')
+            print('Creating subscription {} subscriptions on {}'.format(sub_name, lcoi_url))
+            create_sub_response = cse.create_subscription(lcoi_url, sub_name, poa, event_types = [1, 3], result_content = 2)
+            print('Response code: {}'.format(create_sub_response.rsc))
+            print('Request ID: {}'.format(create_sub_response.rqi))
+            print('Response body:\n{}'.format(create_sub_response.pc))
+
+            existing_subscription = json.loads(create_sub_response.pc)['uri']
 
         # Create a callback function to handle async notifications from the sub.
         async def cb(req, res):
             #  Process request.
             if req.method == 'POST' or req.body_exists():
-                print(await req.json())
+                body = await req.json()
+                print(body['sgn']['nev']['rep']['lcoi'])
 
                 # Modify response.  All that is set is content_type == OneM2MPrimitive.CONTENT_TYPE_JSON
                 res.set_status(OneM2MPrimitive.M2M_RSC_OK)
@@ -95,8 +122,16 @@ def main():
             # Send response.
             return res
 
+
+        print('\n===============================\n')
+        print('Starting async response server on http://{}:{}'.format(NOTIFICATION_SERVER_IP, NOTIFICATION_SERVER_PORT))
+        print('\n===============================')
+        print('POST requests to "http://{}:{}/notify" with header "X-M2M-RI: {}"'.format(NOTIFICATION_SERVER_IP, NOTIFICATION_SERVER_PORT, existing_subscription))
+        print('===============================')
+        async_response_handler = cse.ae.get_async_response_handler(NOTIFICATION_SERVER_IP, NOTIFICATION_SERVER_PORT)
         # Register callback to the sub rqi.
-        async_response_handler.set_rqi_cb(create_sub_response.rqi, cb)
+        async_response_handler.set_rqi_cb(existing_subscription, cb)
+        async_response_handler.start()
 
         # Async handler runs in a daemon thread.  Keep the main process alive until ctrl-c.
         while(True):
@@ -116,10 +151,10 @@ def main():
         if cse.ae is not None:
             del_res = cse.delete_ae()
             print('AE delete response code: {} '.format(del_res.rsc))
-    except Exception as e:
-        print(e)
-    finally:
-        pass
+#    except Exception as e:
+#        print(e)
+#    finally:
+#        pass
 
 if __name__ == '__main__':
     main()
