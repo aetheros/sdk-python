@@ -16,10 +16,9 @@ def main():
         # host, port, resource
         CSE_HOST = 'dev9.usw1.aws.corp.grid-net.com'
         CSE_PORT = 21300
-        CSE_RESOURCE = 'PN_CSE'
 
         # Create an instance of CSE
-        pn_cse = CSE(CSE_HOST, CSE_PORT, CSE_RESOURCE)
+        pn_cse = CSE(CSE_HOST, CSE_PORT)
 
         # Create an AE instance to register with the CSE.
         req_ae = AE(

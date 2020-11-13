@@ -13,7 +13,10 @@ from client.exceptions.InvalidArgumentException import InvalidArgumentException
 
 
 class CSE:
-    def __init__(self, host, port, rsc):
+
+    CSE_RESOURCE = 'PN_CSE'
+
+    def __init__(self, host, port, rsc = None):
         """Constructor
 
         Args:
@@ -25,7 +28,7 @@ class CSE:
         self.host = host
         self.port = port
         self.ae = None
-        self.rsc = rsc
+        self.rsc = rsc or CSE.CSE_RESOURCE
 
     def register_ae(self, ae):
         """Synchronously register an AE with a CSE.
