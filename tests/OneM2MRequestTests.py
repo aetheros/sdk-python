@@ -9,6 +9,7 @@ from client.exceptions.InvalidOneM2MOperationException import InvalidOneM2MOpera
 from client.exceptions.RequiredRequestParameterMissingException import RequiredRequestParameterMissingException
 from client.exceptions.InvalidRequestParameterStructureException import InvalidRequestParameterStructureException
 
+
 class OneM2MRequestTests(unittest.TestCase):
     # def setUp(self):
     #     """Setup async loop.
@@ -31,7 +32,7 @@ class OneM2MRequestTests(unittest.TestCase):
 
         # Convert the params to headers.
         headers = req._map_params_to_headers(params)
-        
+
         # Compare the headers values using their keys to the params values.
         for header in req.HTTP_HEADER_M2M_PARAM_TO_MAP:
             if header in headers.keys():
@@ -39,7 +40,7 @@ class OneM2MRequestTests(unittest.TestCase):
                 onem2m_param = params[req.HTTP_HEADER_M2M_PARAM_TO_MAP[header]]
 
                 self.assertEqual(onem2m_param, http_header)
-    
+
     def test_validate_required_params_for_create_op(self):
         """_validate_required_params(OneM2MOperation.Create, params): Raises exception when a required param is missing from a Create operation request.
         """
@@ -85,7 +86,9 @@ class OneM2MRequestTests(unittest.TestCase):
         self.assertEqual(original_params[OneM2MPrimitive.M2M_PARAM_TO], to, '"to" does not match value specified in "params". {} != {}'.format(original_params[OneM2MPrimitive.M2M_PARAM_TO],to))
         self.assertEqual(original_params, params, '"params" has been corrupted. {} != {}'.format(original_params, params))
 
-    def test_resolve_params_uses_member_params_to_when_to_arg_is_none_and_params_has_no_to(self):
+    def test_resolve_params_uses_member_params_to_when_to_arg_is_none_and_params_has_no_to(
+        self,
+    ):
         """_resolve_params(to=None, params=original_params): Uses the 'to' from member 'params' when the 'to' function arg is None and 'params' arg does not contain a 'to' member.
         """
         print(self.shortDescription())
@@ -136,7 +139,7 @@ class OneM2MRequestTests(unittest.TestCase):
 
         req = OneM2MRequest()
 
-        params = [1,2,3]
+        params = [1, 2, 3]
 
         try:
             req._resolve_params(to=None, params=params)
@@ -145,7 +148,7 @@ class OneM2MRequestTests(unittest.TestCase):
 
     def test_create(self):
         pass
-    
+
     # def test_one_m2m_async_create_request(self):
     #     """Async request test """
     #     print(self.shortDescription())

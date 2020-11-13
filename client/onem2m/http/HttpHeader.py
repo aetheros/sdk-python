@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-class HttpHeader():
+
+class HttpHeader:
     HOST = 'Host'
     ACCEPT = 'Accept'
     CONTENT_TYPE = 'Content-Type'

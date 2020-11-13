@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-class OneM2MOperation():
+
+class OneM2MOperation:
     Create = 'Create'
     Retrieve = 'Retrieve'
     Update = 'Update'

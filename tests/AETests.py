@@ -5,9 +5,11 @@ import unittest, json
 from client.ae.AE import AE, MissingRequiredAttibuteError
 from client.exceptions.InvalidArgumentException import InvalidArgumentException
 
+
 class AETests(unittest.TestCase):
     """AE Tests
     """
+
     def test_json_string_deserialization(self):
         """AE constructor deserializes json string representation of AE object into AE object.
         """
@@ -40,7 +42,7 @@ class AETests(unittest.TestCase):
         self.assertIsInstance(ae, AE)
         # Test object content.
         self.assertDictEqual(ae.__dict__, json.loads(ae_json_str)['ae'])
-    
+
     def test_ae_instantiation(self):
         """AE initializes from dict containing required AE parameters.
         """
@@ -50,7 +52,7 @@ class AETests(unittest.TestCase):
             'api': 'N_SB_AE_1',
             'apn': 'N_SB_AE_1',
             'aei': 'N_SB_AE_1',
-            'poa': ["http://localhost:7000"]
+            'poa': ['http://localhost:7000'],
         }
 
         ae = AE(ae_params)
@@ -97,6 +99,6 @@ class AETests(unittest.TestCase):
         """AE construction raises MissingRequiredAttibureError.
         """
         print(self.shortDescription())
-        
+
         with self.assertRaises(MissingRequiredAttibuteError):
             ae = AE({})

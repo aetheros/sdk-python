@@ -7,7 +7,8 @@ from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 
 from client.onem2m.http.OneM2MResponse import OneM2MResponse
 
-class AsyncResponseListenerFactory():
+
+class AsyncResponseListenerFactory:
     """Builds and returns a single instance of AsyncReponseListener.
     """
 
@@ -15,12 +16,14 @@ class AsyncResponseListenerFactory():
     instance = None
 
     def __init__(self, host='0.0.0.0', port=8080):
-        """ Initialize the singletone or return the existing instance.
+        """Initialize the singletone or return the existing instance.
         """
 
         if AsyncResponseListenerFactory.instance is None:
-            AsyncResponseListenerFactory.instance = AsyncResponseListenerFactory.__AsyncResponseListener(host, port)
-    
+            AsyncResponseListenerFactory.instance = (
+                AsyncResponseListenerFactory.__AsyncResponseListener(host, port)
+            )
+
     def get_instance(self):
         """ Return the singleton instance.
         """
@@ -35,13 +38,13 @@ class AsyncResponseListenerFactory():
         loop = None
         _stop_event = threading.Event()
 
-        # Defaults are set in the factory class constructor 
+        # Defaults are set in the factory class constructor
         def __init__(self, host, port):
             threading.Thread.__init__(self)
             # Server host and port.
             self.host = host
             self.port = port
-            self.daemon = True # Kill thread when main exists.
+            self.daemon = True  # Kill thread when main exists.
 
             self.runner = None
 
@@ -56,12 +59,14 @@ class AsyncResponseListenerFactory():
             server = web.Application()
 
             # @todo make routes configurable via params.
-            server.add_routes([
-                web.get('/', self._handler),
-                web.post('/', self._handler),
-                web.get('/notify', self._handler),
-                web.post('/notify', self._handler)
-                ])
+            server.add_routes(
+                [
+                    web.get('/', self._handler),
+                    web.post('/', self._handler),
+                    web.get('/notify', self._handler),
+                    web.post('/notify', self._handler),
+                ]
+            )
 
             # Start the server.
             if self.runner is None:
@@ -74,7 +79,7 @@ class AsyncResponseListenerFactory():
             """Starts the async response server in its own thread.
             """
             asyncio.set_event_loop(asyncio.new_event_loop())
-            loop =  asyncio.get_event_loop()
+            loop = asyncio.get_event_loop()
             loop.create_task(self._init_async_response_server())
             loop.run_forever()
 
@@ -82,7 +87,7 @@ class AsyncResponseListenerFactory():
             print('Stopping async response server.')
             # if self.thread is not None:
             self._stop_event.set()
-        
+
         def stopped(self):
             return self._stop_event.is_set()
 
@@ -90,19 +95,25 @@ class AsyncResponseListenerFactory():
             # web.run_app(server, host=self.host, port=self.port)
 
         async def _handler(self, req):
-            request_method = req.method
-            body = await req.json()
-            request_id = body['sgn']['sur']
 
-            res = web.Response(content_type=OneM2MPrimitive.CONTENT_TYPE_JSON)
+            try:
+                request_method = req.method
+                body = await req.json()
+                request_id = body['m2m:sgn']['sur']
 
-            if request_id in self.rqi_cb_map.keys():
-                # Execute callback and pass it the req.
-                return await self.rqi_cb_map[request_id](req, res)
-            else:
-                # No handler has been registed for this request id.
-                res.set_status(4004)
-                res.body = 'No response handler has been set for this rqi.'
+                res = web.Response(content_type=OneM2MPrimitive.CONTENT_TYPE_JSON)
+
+                if request_id in self.rqi_cb_map.keys():
+                    # Execute callback and pass it the req.
+                    return await self.rqi_cb_map[request_id](req, res)
+                else:
+                    # No handler has been registed for this request id.
+                    res.set_status(4004)
+                    res.body = 'No response handler has been set for this rqi.'
+            except Exception as err:
+                print(err)
+                res.set_status(500)
+                res.body = str(err)
 
             return res
 
@@ -113,7 +124,7 @@ class AsyncResponseListenerFactory():
                 rqi (string): The request id.
                 cb (function): The callback function.
             """
-            self.rqi_cb_map[str(rqi)] = cb # Key must be string.
+            self.rqi_cb_map[str(rqi)] = cb  # Key must be string.
 
         def call_rqi_cb(self, rqi, res=None):
             """Execute the callback function for the specified rqi.
@@ -126,8 +137,10 @@ class AsyncResponseListenerFactory():
                 self.rqi_cb_map[rqi]()
             else:
                 # Enforce callback response type.
-                if not isinstance(res, OneM2MResponse): 
-                    raise InvalidAsyncResponseHandlerArgument('Async response callbacks can have no argument or an argument of type OneM2MResponse')
+                if not isinstance(res, OneM2MResponse):
+                    raise InvalidAsyncResponseHandlerArgument(
+                        'Async response callbacks can have no argument or an argument of type OneM2MResponse'
+                    )
 
                 self.rqi_cb_map[rqi](res)
 
@@ -143,8 +156,10 @@ class AsyncResponseListenerFactory():
         def __str__(self):
             return json.dumps(self.rqi_cb_map)
 
+
 class InvalidAsyncResponseHandlerArgument(Exception):
     """
     """
+
     def __init__(self, msg):
         self.message = msg

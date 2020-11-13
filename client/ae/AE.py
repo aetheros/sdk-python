@@ -21,6 +21,8 @@ class AE(OneM2MResource):
         M2M_ATTR_AE_ID,
         M2M_ATTR_POINT_OF_ACCESS
     ]
+
+    SHORT_NAME = 'm2m:ae'
     
     def __init__(self, args):
         """Constructor
@@ -29,26 +31,24 @@ class AE(OneM2MResource):
             args (str|dict): JSON string representation of an ae or dict representation of an ae.
         """
 
-        # Resource short name.
-        OneM2MResource.short_name = 'ae'
-
         # Expects a dict, but should handle the string representation of a json object.
         # Clearer when deserializing response content to an object.
         if isinstance(args, str):
             args = json.loads(args)
 
         # CSE returns a resource wrapped in a containing json object with the resource
-        # name as its key ex. {"ae": {"aei": "", ...}}.  For AE instantiation and deserialization
+        # name as its key ex. {'ae': {'aei': '', ...}}.  For AE instantiation and deserialization
         # check for an ae member.  If a regular instantiation using an initialization dict, ignore.
-        if 'ae' in tuple(args.keys()):
-            ae = args['ae']
+        if AE.SHORT_NAME in tuple(args.keys()):
+            ae = args[AE.SHORT_NAME]
         else:
             ae = args
 
         self._validate_attributes(ae)
-        self.__dict__ = ae
 
         self.async_response_handler = None
+
+        super().__init__(AE.SHORT_NAME, ae)        
 
     def __str__(self):
         """Print string repr when print is called on object.

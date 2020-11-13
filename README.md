@@ -1,6 +1,6 @@
 ## Virtual Env.
 ```python
-virtualenv -p /usr/bin/python3.7 virtenv
+virtualenv -p /usr/bin/python3 virtenv
 source virtenv/bin/activate
 python --version
 ```

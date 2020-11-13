@@ -4,14 +4,20 @@ import unittest
 import requests
 
 from client.onem2m.http.OneM2MResponse import OneM2MResponse
+
 # import sys, os
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from client.ae.AsyncResponseListener import AsyncResponseListenerFactory, InvalidAsyncResponseHandlerArgument
+from client.ae.AsyncResponseListener import (
+    AsyncResponseListenerFactory,
+    InvalidAsyncResponseHandlerArgument,
+)
+
 
 class AsyncResponseListenerTests(unittest.TestCase):
     def test_ae_response_listener_singleton(self):
-        """AsyncResponseListernerFactory returns singleton instance of AsyncResponseListener."""
+        """AsyncResponseListernerFactory returns singleton instance of AsyncResponseListener.
+        """
         print(self.shortDescription())
 
         f1 = AsyncResponseListenerFactory()
@@ -20,11 +26,11 @@ class AsyncResponseListenerTests(unittest.TestCase):
         f2 = AsyncResponseListenerFactory()
         i2 = id(f2.get_instance())
 
-
-        self.assertEqual (i1, i2, 'Factory failed to return the same instance.')
+        self.assertEqual(i1, i2, 'Factory failed to return the same instance.')
 
     def test_enforce_callback_argument_datatype(self):
-        """Response handler argument must be OneM2MResponse object."""
+        """Response handler argument must be OneM2MResponse object.
+        """
         print(self.shortDescription())
 
         # Instantiate the factory, get the singleton handler and start the server.
@@ -39,7 +45,6 @@ class AsyncResponseListenerTests(unittest.TestCase):
         # Callback
         def cb():
             return 123
-        
 
         try:
             # Set the callback.
@@ -63,9 +68,9 @@ class AsyncResponseListenerTests(unittest.TestCase):
             # Execute the callback.
             i1.call_rqi_cb(rqi, oneM2MResponse)
         except InvalidAsyncResponseHandlerArgument as err:
-                # No exception should be raised.
-                self.assertTrue(False, 'Invalid async response handler argument.')
-        
+            # No exception should be raised.
+            self.assertTrue(False, 'Invalid async response handler argument.')
+
     # def test_set_rqi_callback(self):
     #     l = AsyncResponseListenerFactory().get_instance()
 
@@ -79,6 +84,3 @@ class AsyncResponseListenerTests(unittest.TestCase):
     #     l.state_async_response_server()
 
     #     l.stop()
-
-
-        

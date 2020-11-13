@@ -5,8 +5,10 @@ from client.onem2m.http.HttpHeader import HttpHeader
 from client.onem2m.http.HttpStatusCode import HttpStatusCode
 
 import json
+from enum import Enum, unique
 
-class OneM2MPrimitive():
+
+class OneM2MPrimitive:
     CONTROL = 'control'
     CONTENT = 'content'
 
@@ -35,11 +37,11 @@ class OneM2MPrimitive():
     M2M_PARAM_REQUEST_IDENTIFIER = 'rqi'
     M2M_PARAM_CONTENT = 'cn'
     # M2M_PARAM_RESOURCE_TYPE = 'rqt'
-    M2M_PARAM_RESPONSE_STATUS_CODE= 'rsc'
+    M2M_PARAM_RESPONSE_STATUS_CODE = 'rsc'
     M2M_PARAM_AE_ID = 'aei'
     M2M_PARAM_APP_ID = 'api'
     M2M_PARAM_APP_NAME = 'apn'
-    M2M_PARAM_POINT_OF_ACCESS= 'poa'
+    M2M_PARAM_POINT_OF_ACCESS = 'poa'
 
     # Query string request parameters.
     # M2M_PARAM_RESPONSE_TYPE = 'rt'
@@ -48,7 +50,7 @@ class OneM2MPrimitive():
     M2M_PARAM_FILTER_USAGE = 'fu'
     M2M_PARAM_RESOURCE_TYPE = 'ty'
 
-    # @todo add remaining from TS-0009 Table 6.2.2.2-1 
+    # @todo add remaining from TS-0009 Table 6.2.2.2-1
 
     M2M_HTTP_HEADERS = [
         X_M2M_ORIGIN,
@@ -62,7 +64,7 @@ class OneM2MPrimitive():
         X_M2M_OET,
         X_M2M_EC,
         X_M2M_RSC,
-        X_M2M_ATI
+        X_M2M_ATI,
     ]
 
     # OneM2M Parameter to HTTP Header Map.
@@ -71,8 +73,8 @@ class OneM2MPrimitive():
         M2M_PARAM_OPERATION: HttpHeader.METHOD,
         M2M_PARAM_FROM: X_M2M_ORIGIN,
         M2M_PARAM_REQUEST_IDENTIFIER: X_M2M_RI,
-        # X_M2M_RTV: X_M2M_RTV,        
-        # X_M2M_RTU: X_M2M_RTU        
+        # X_M2M_RTV: X_M2M_RTV,
+        # X_M2M_RTU: X_M2M_RTU
     }
 
     # HTTP Header to OneM2M Parameter Map.
@@ -81,7 +83,6 @@ class OneM2MPrimitive():
         # X_M2M_ORIGIN: M2M_PARAM_FROM,
         # HttpHeader.METHOD: M2M_PARAM_OPERATION,
         # X_M2M_RI: M2M_PARAM_REQUEST_IDENTIFIER,
-        
         # HttpHeader.HOST,
         # HttpHeader.ACCEPT,
         # HttpHeader.CONTENT_TYPE,
@@ -127,11 +128,78 @@ class OneM2MPrimitive():
         M2M_RSC_OK,
         M2M_RSC_CREATED,
         M2M_RSC_DELETED,
-        M2M_RSC_UPDATED
+        M2M_RSC_UPDATED,
     ]
+
+    @unique
+    class M2M_RESULT_CONTENT_TYPES(Enum):
+        Nothing = 0
+        Attributes = 1
+        HierarchicalAddress = 2
+        HierarchicalAddressPlusAttributes = 3
+        AttributesPlusChildResources = 4
+        AttributesPlusChildResourceReferences = 5
+        ChildResourceReferences = 6
+        OriginalResource = 7
+        ChildResources = 8        
+
+    @unique
+    class M2M_RESOURCE_TYPES(Enum):
+        Mixed = 0
+        AccessControlPolicy = 1
+        AE = 2
+        Container = 3
+        ContentInstance = 4
+        CSEBase = 5
+        Delivery = 6
+        EventConfig = 7
+        ExecInstance = 8
+        Group = 9
+        LocationPolicy = 10
+        M2MServiceSubscription = 11
+        MgmtCmd = 12
+        MgmtObj = 13
+        Node = 14
+        PollingChannel = 15
+        RemoteCSE = 16
+        Request = 17
+        Schedule = 18
+        ServiceSubscribedAppRule = 19
+        ServiceSubscribedNode = 20
+        StatsCollect = 21
+        StatsConfig = 22
+        Subscription = 23
+        SemanticDescriptor = 24
+        NotificationTargetMgmtPolicyRef = 25
+        NotificationTargetPolicy = 26
+        PolicyDeletionRules = 27
+        FlexContainer = 28
+        TimeSeries = 29
+        TimeSeriesInstance = 30
+        Role = 31
+        Token = 32
+        TrafficPattern = 33
+        DynamicAuthorizationConsultation = 34
+        AccessControlPolicyAnnc = 10001
+        AEAnnc = 10002
+        ContainerAnnc = 10003
+        ContentInstanceAnnc = 10004
+        GroupAnnc = 10009
+        LocationPolicyAnnc = 10010
+        MgmtObjAnnc = 10013
+        NodeAnnc = 10014
+        RemoteCSEAnnc = 10016
+        ScheduleAnnc = 10018
+        SemanticDescriptorAnnc = 10024
+        FlexContainerAnnc = 10028
+        TimeSeriesAnnc = 10029
+        TimeSeriesInstanceAnnc = 10030
+        TrafficPatternAnnc = 10033
+        DynamicAuthorizationConsultationAnnc = 10034
 
     def __str__(self):
         return json.dumps(self.__dict__)
+
 
 class MissingRequiredControlParams(Exception):
     def __init__(self, msg):

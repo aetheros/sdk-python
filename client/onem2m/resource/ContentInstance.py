@@ -17,7 +17,4 @@ from client.onem2m.OneM2MResource import OneM2MResource
 # }
 class ContentInstance(OneM2MResource):
     def __init__(self, cin):
-        self.__dict__ = cin
-        # Resource short name.
-        OneM2MResource.short_name = 'cin'
-
+        super().__init__('m2m:cin', cin)        
