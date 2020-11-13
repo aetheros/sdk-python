@@ -45,21 +45,11 @@ def main():
     try:
         # Credentials from UI registration process.
         ae_id = 'C701b0da5000002'
-        app_id = 'Npiersh-lco'
+        app_id = 'Nverizon-lco'
         ae_credential_id = 'EJ9CK1LAIL07FVHR'
 
-        #sub_name = 'sbabb-test-sub-1'
-        sub_name = 'illuminance-C6f83843a000e37'
-
-        # TODO: don't keep registering duplicate AEs
-
-        ae_id = 'C6f83843a000e37'
-        #poa = 'http://piersh.mooo.com:44346/notify'
-        poa = 'http://10.0.2.2:44346/notify'
-
-        #cse = CSE('api.netsense.aetheros.com', 443, 'PN_CSE')
-        #cse.transport_protocol = 'https'
-        cse = CSE('piersh-m2m.corp.grid-net.com', 21300, 'PN_CSE')
+        cse = CSE('api.netsense.aetheros.com', 443, 'PN_CSE')
+        cse.transport_protocol = 'https'
 
         ae = cse.get_ae(ae_id) if ae_id else None
 
@@ -121,7 +111,9 @@ def main():
 
         print('\n===============================\n')
 
+        sub_name = 'illuminance-{}'.format(ae_id)
         lcoi_url = node + '/lcoi'
+
         print('Checking for subscriptions on {}'.format(lcoi_url))
         # retrieve_sub_response = cse.check_existing_subscriptions(lcoi_url)
         retrieve_sub_response = OneM2MRequest(
