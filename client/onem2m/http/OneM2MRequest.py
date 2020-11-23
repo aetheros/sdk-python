@@ -89,9 +89,6 @@ class OneM2MRequest(OneM2MPrimitive):
     M2M_PARAM_LOCAL_TOKEN_IDS = 'ltids'
     M2M_PARAM_TOKEN_REQUEST_INDICATOR = 'tqi'
 
-    # Where is this defined?
-    M2M_PARAM_RN = 'rn'
-
     # Request params (query string).
     QUERY_STRING_PARAMS = [
         M2M_PARAM_RESPONSE_TYPE,
@@ -120,7 +117,7 @@ class OneM2MRequest(OneM2MPrimitive):
         M2M_PARAM_TOKEN_IDS,
         M2M_PARAM_LOCAL_TOKEN_IDS,
         M2M_PARAM_TOKEN_REQUEST_INDICATOR,
-        M2M_PARAM_RN,
+        M2M_PARAM_RESOURCE_NAME,
     ]
 
     def __init__(self, to=None, params={}):

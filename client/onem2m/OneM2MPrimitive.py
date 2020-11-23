@@ -48,6 +48,7 @@ class OneM2MPrimitive:
     # M2M_PARAM_RESULT_PERSISTENCE = 'rp'
     M2M_PARAM_RESULT_CONTENT = 'rcn'
     M2M_PARAM_FILTER_USAGE = 'fu'
+    M2M_PARAM_RESOURCE_NAME = 'rn'
     M2M_PARAM_RESOURCE_TYPE = 'ty'
 
     # @todo add remaining from TS-0009 Table 6.2.2.2-1
@@ -196,6 +197,25 @@ class OneM2MPrimitive:
         TimeSeriesInstanceAnnc = 10030
         TrafficPatternAnnc = 10033
         DynamicAuthorizationConsultationAnnc = 10034
+
+
+    @unique
+    class M2M_FILTER_USAGE(Enum):
+        Unspecified = -1
+        Discovery = 1
+        ConditionalRetrieval = 2
+        IpeonDemandDiscovery = 3
+
+
+    @unique
+    class M2M_NOTIFICATION_EVENT_TYPES(Enum):
+        Unspecified = -1
+        UpdateOfResource = 1
+        DeleteOfResource = 2
+        CreateOfDirectChildResource = 3
+        DeleteOfDirectChildResource = 4
+        RetrieveOfContainerResourceWithNoChildResource = 5
+
 
     def __str__(self):
         return json.dumps(self.__dict__)

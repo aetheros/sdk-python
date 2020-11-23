@@ -35,18 +35,13 @@ class LcoTelemetryTrigger(OneM2MResource):
 #
 def main():
 
-
-    #old_send = httplib.HTTPConnection.send
-    #def new_send(self, data):
-    #    print(data)
-    #    return old_send(self, data) #return is not necessary, but never hurts, in case the library is changed
-    #httplib.HTTPConnection.send = new_send
-
     try:
         # Credentials from UI registration process.
         ae_id = 'C701b0da5000002'
         app_id = 'Nverizon-lco'
         ae_credential_id = 'EJ9CK1LAIL07FVHR'
+
+        #TODO: poa = 'http://<AE public IP Address>:44346/notify'
 
         cse = CSE('api.netsense.aetheros.com', 443, 'PN_CSE')
         cse.transport_protocol = 'https'
@@ -120,9 +115,9 @@ def main():
             cse.get_to(lcoi_url),
             {
                 OneM2MPrimitive.M2M_PARAM_FROM: cse.ae.ri,
-                OneM2MPrimitive.M2M_PARAM_FILTER_USAGE: 1,
+                OneM2MPrimitive.M2M_PARAM_FILTER_USAGE: OneM2MPrimitive.M2M_FILTER_USAGE.Discovery.value,
                 OneM2MPrimitive.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.Subscription.value,
-                'rn': sub_name,
+                OneM2MPrimitive.M2M_PARAM_RESOURCE_NAME: sub_name,
                 #'poa': poa,
             },
         ).retrieve()
@@ -150,7 +145,12 @@ def main():
                 )
             )
             create_sub_response = cse.create_subscription(
-                lcoi_url, sub_name, poa, event_types=[1, 3], result_content=2
+                lcoi_url, sub_name, poa,
+                result_content=OneM2MPrimitive.M2M_RESULT_CONTENT_TYPES.HierarchicalAddress.value,
+                event_types=[
+                    OneM2MPrimitive.M2M_NOTIFICATION_EVENT_TYPES.UpdateOfResource.value,
+                    OneM2MPrimitive.M2M_NOTIFICATION_EVENT_TYPES.CreateOfDirectChildResource.value,
+                ]
             )
             print('Response code: {}'.format(create_sub_response.rsc))
             print('Request ID: {}'.format(create_sub_response.rqi))
