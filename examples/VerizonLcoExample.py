@@ -41,6 +41,8 @@ def main():
         app_id = 'Nverizon-lco'
         ae_credential_id = 'EJ9CK1LAIL07FVHR'
 
+        node = '/PN_CSE/nod-015322009906000'    # optional
+
         #TODO: poa = 'http://<AE public IP Address>:44346/notify'
 
         cse = CSE('api.netsense.aetheros.com', 443, 'PN_CSE')
@@ -68,15 +70,18 @@ def main():
 
         print('Using AE with ID {}'.format(cse.ae.aei))
 
-        print('Discovering existing nodes')
-        discover_response = cse.discover_containers()
-        print('Response code: {}'.format(discover_response.rsc))
-        print('Response body:\n{}'.format(discover_response.pc))
-        print('\n===============================\n')
 
-        # Pick a random container.
-        nodes = discover_response.pc['m2m:uril']
-        node = next(x for x in nodes if re.match(r'.*/nod-[0-9]{15}$', x))
+        if not node:
+
+            print('Discovering existing nodes')
+            discover_response = cse.discover_containers()
+            print('Response code: {}'.format(discover_response.rsc))
+            print('Response body:\n{}'.format(discover_response.pc))
+            print('\n===============================\n')
+
+            # Pick a random container.
+            nodes = discover_response.pc['m2m:uril']
+            node = next(x for x in nodes if re.match(r'.*/nod-[0-9]{15}$', x))
 
         print('Using node {}'.format(node))
         #retrieve_node_children = cse.retrieve_resource(node)
