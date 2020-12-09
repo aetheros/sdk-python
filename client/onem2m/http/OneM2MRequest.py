@@ -117,7 +117,7 @@ class OneM2MRequest(OneM2MPrimitive):
         M2M_PARAM_TOKEN_IDS,
         M2M_PARAM_LOCAL_TOKEN_IDS,
         M2M_PARAM_TOKEN_REQUEST_INDICATOR,
-        M2M_PARAM_RESOURCE_NAME,
+        OneM2MPrimitive.M2M_PARAM_RESOURCE_NAME,
     ]
 
     def __init__(self, to=None, params={}):
