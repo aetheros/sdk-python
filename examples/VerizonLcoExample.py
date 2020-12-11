@@ -15,12 +15,15 @@ NOTIFICATION_SERVER_PORT = 44346
 
 class LcoControlSchedule(OneM2MResource):
     def __init__(self, dict):
-        super().__init__('lco:lcocs', dict)        
-
+        super().__init__('lco:lcocs', dict)
 
 class LcoTelemetryTrigger(OneM2MResource):
     def __init__(self, dict):
-        super().__init__('lco:lcottr', dict)        
+        super().__init__('lco:lcottr', dict)
+
+class Lwm2mNotificationClassAttributes(OneM2MResource):
+    def __init__(self, dict):
+        super().__init__('lwm2m:nca', dict)
 
 
 #
@@ -64,8 +67,7 @@ def main():
                 )
             )
 
-            print('Response code: {}'.format(ae_reg_response.rsc))
-            print('Response body:\n{}'.format(ae_reg_response.pc))
+            dump_response('Register AE', ae_reg_response)
             print('\n===============================\n')
 
         print('Using AE with ID {}'.format(cse.ae.aei))
@@ -75,8 +77,8 @@ def main():
 
             print('Discovering existing nodes')
             discover_response = cse.discover_containers()
-            print('Response code: {}'.format(discover_response.rsc))
-            print('Response body:\n{}'.format(discover_response.pc))
+
+            dump_response('Discover AE', discover_response)
             print('\n===============================\n')
 
             # Pick a random container.
@@ -91,21 +93,28 @@ def main():
         #slot_value = 352144368606240
 
         print('Updating Control Schedule')
-        cse.update_resource(node + '/lcocs', LcoControlSchedule({
+        update_lcs_response = cse.update_resource(node + '/lcocs', LcoControlSchedule({
             'slots': [slot_value] * 42
         }))
+
+        dump_response('Update Control Schedule', update_lcs_response)
         print('\n===============================\n')
 
 
         print('Writing Telemetry Trigger')
-        cse.update_resource(node + '/lcottr', LcoTelemetryTrigger({
+        update_lottr_response = cse.update_resource(node + '/lcottr', LcoTelemetryTrigger({
             'cloudActiveEnergy': int(time.time()) - 60 * 60 * 4   # 4 hours ago
         }))
+        dump_response('Write Telemetry Trigger', update_lottr_response)
         print('\n===============================\n')
 
 
         print('Reading Telemetry Transmission')
         ttn_response = cse.retrieve_resource(node + '/lcottn0')
+        dump_response('Read Telemetry Transmission', ttn_response)
+
+        print('\n===============================\n')
+
         ttn = json.loads(ttn_response.pc['lco:lcottn']['data'])
         print('Active Energy:\n{}'.format(json.dumps(ttn, indent=2)))
 
@@ -126,43 +135,64 @@ def main():
                 #'poa': poa,
             },
         ).retrieve()
-        print('Response code: {}'.format(retrieve_sub_response.rsc))
-        print('Response body:\n{}'.format(retrieve_sub_response.pc))
+        dump_response('Read Telemetry Transmission', retrieve_sub_response)
         print('\n===============================\n')
 
-        existing_subscriptions = retrieve_sub_response.pc['m2m:uril']
-        existing_subscription = None
+        if "poa" in locals():
 
-        for sub in existing_subscriptions:
+            existing_subscriptions = retrieve_sub_response.pc['m2m:uril']
+            existing_subscription = None
 
-            sub_resource = cse.retrieve_resource(sub).pc['m2m:sub']
+            for sub in existing_subscriptions:
 
-            if False and poa in sub_resource['nu']:
-                existing_subscription = sub
-            else:
-                cse.delete_resource(sub)
+                sub_resource = cse.retrieve_resource(sub).pc['m2m:sub']
 
-        if not existing_subscription:
-            print('\n===============================\n')
-            print(
-                'Creating subscription {} subscriptions on {}'.format(
-                    sub_name, lcoi_url
+                if False and poa in sub_resource['nu']:
+                    existing_subscription = sub
+                else:
+                    delete_sub_response = cse.delete_resource(sub)
+                    dump_response('Delete Subscription', delete_sub_response)
+
+
+            if not existing_subscription:
+                print('\n===============================\n')
+                print(
+                    'Creating subscription {} subscriptions on {}'.format(
+                        sub_name, lcoi_url
+                    )
                 )
-            )
-            create_sub_response = cse.create_subscription(
-                lcoi_url, sub_name, poa,
-                result_content=OneM2MPrimitive.M2M_RESULT_CONTENT_TYPES.HierarchicalAddress.value,
-                event_types=[
-                    OneM2MPrimitive.M2M_NOTIFICATION_EVENT_TYPES.UpdateOfResource.value,
-                    OneM2MPrimitive.M2M_NOTIFICATION_EVENT_TYPES.CreateOfDirectChildResource.value,
-                ]
-            )
-            print('Response code: {}'.format(create_sub_response.rsc))
-            print('Request ID: {}'.format(create_sub_response.rqi))
-            print('Response body:\n{}'.format(create_sub_response.pc))
-            print('\n===============================\n')
+                create_sub_response = cse.create_subscription(
+                    lcoi_url, sub_name, poa,
+                    result_content=OneM2MPrimitive.M2M_RESULT_CONTENT_TYPES.HierarchicalAddress.value,
+                    event_types=[
+                        OneM2MPrimitive.M2M_NOTIFICATION_EVENT_TYPES.UpdateOfResource.value,
+                        OneM2MPrimitive.M2M_NOTIFICATION_EVENT_TYPES.CreateOfDirectChildResource.value,
+                    ]
+                )
+                dump_response('Create Subscription', create_sub_response)
+                print('\n===============================\n')
 
-            existing_subscription = lcoi_url + '/' + sub_name
+                existing_subscription = lcoi_url + '/' + sub_name
+
+
+        print('\n===============================\n')
+        print('Setting pmin/pmax on {}'.format(lcoi_url))
+
+        nca_url = lcoi_url + '/nca'
+        nca = Lwm2mNotificationClassAttributes({
+            "minimumPeriod": 15,
+            "maximumPeriod": 10 * 60,
+        })
+
+        try:
+            update_nca_response = cse.update_resource(nca_url, nca)
+            dump_response('Update NCA', update_nca_response)
+            
+        except Exception as e:
+            create_nca_response = cse.create_resource(lcoi_url, 'nca', nca)
+            dump_response('Create NCA', create_nca_response)
+
+        print('\n===============================\n')
 
 
         # Create a callback function to handle async notifications from the sub.
@@ -216,6 +246,14 @@ def main():
 #        print(e)
 #    finally:
 #        pass
+
+def dump_response(name, response):
+
+    print('{} Response code: {}'.format(name, response.rsc))
+    print('{} Request ID: {}'.format(name, response.rqi))
+
+    if response.pc:
+        print('{} Response body:\n{}'.format(name, json.dumps(response.pc, indent=2)))
 
 if __name__ == '__main__':
     main()
