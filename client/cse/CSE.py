@@ -202,26 +202,46 @@ class CSE:
             OneM2MResponse: The request response.
         """
 
-        to = self.get_to(uri)
-        params = {
-            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
-            OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: result_content,
-        }
-
-        content = Subscription(
-            {
+        return self.create_resource(
+            uri,
+            sub_name,
+            Subscription({
                 'm2m:enc': {'net': event_types, 'ty': 4},
                 'nct': 1,
                 'nu': [notification_uri],
-                'rn': sub_name,
-            }
+            }),
+            result_content
         )
+
+
+    def create_resource(
+        self, uri, name, content, result_content=None
+    ):
+        """ Create a resource.
+
+        Args:
+            uri: URI of a resource.
+
+        Returns:
+            OneM2MResponse: The request response.
+        """
+
+        to = self.get_to(uri)
+        params = {
+            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
+        }
+
+        if result_content is not None:
+            params[OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT] = result_content
+
+        content.name = name
 
         oneM2MRequest = OneM2MRequest()
 
         oneM2MResponse = oneM2MRequest.create(to, params, content)
 
         return oneM2MResponse
+
 
     # @note: not really working.  'la' virtual resource never returns the latest content instance.
     def retrieve_latest_content_instance(self, uri):
