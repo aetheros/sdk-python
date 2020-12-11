@@ -10,9 +10,9 @@ class AE(OneM2MResource):
     # AE specific resource attibutes
     # TS-0004 Table 8.2.3-1
     # @todo add remaining AE specific attributes.
-    M2M_ATTR_APP_ID = 'api'
-    M2M_ATTR_AE_ID = 'aei'
-    M2M_ATTR_APP_NAME = 'apn'
+    M2M_ATTR_APP_ID          = 'api'
+    M2M_ATTR_AE_ID           = 'aei'
+    M2M_ATTR_APP_NAME        = 'apn'
     M2M_ATTR_POINT_OF_ACCESS = 'poa'
 
     # Attributes that must be defined in each instance.
@@ -23,7 +23,7 @@ class AE(OneM2MResource):
     ]
 
     SHORT_NAME = 'm2m:ae'
-    
+
     def __init__(self, args):
         """Constructor
 
@@ -48,7 +48,7 @@ class AE(OneM2MResource):
 
         self.async_response_handler = None
 
-        super().__init__(AE.SHORT_NAME, ae)        
+        super().__init__(AE.SHORT_NAME, ae)
 
     def __str__(self):
         """Print string repr when print is called on object.
@@ -59,10 +59,10 @@ class AE(OneM2MResource):
         """Print string when repr is called on object.
         """
         return json.dumps(self.__dict__)
-        
+
     def _validate_attributes(self, ae):
         """Synchronously register an AE with a CSE.
-        
+
         Args:
             ae (AE): The AE to register.
 

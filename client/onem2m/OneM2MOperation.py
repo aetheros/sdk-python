@@ -2,10 +2,10 @@
 
 
 class OneM2MOperation:
-    Create = 'Create'
+    Create   = 'Create'
     Retrieve = 'Retrieve'
-    Update = 'Update'
-    Delete = 'Delete'
-    Notify = 'Notify'
+    Update   = 'Update'
+    Delete   = 'Delete'
+    Notify   = 'Notify'
 
     OPS = (Create, Retrieve, Update, Delete, Notify)

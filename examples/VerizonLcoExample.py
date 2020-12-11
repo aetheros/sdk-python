@@ -57,8 +57,8 @@ def main():
             ae_reg_response = cse.register_ae(
                 AE(
                     {
-                        OneM2MPrimitive.M2M_PARAM_APP_ID: app_id,
-                        OneM2MPrimitive.M2M_PARAM_AE_ID: ae_credential_id,
+                        OneM2MPrimitive.M2M_PARAM_APP_ID         :  app_id,
+                        OneM2MPrimitive.M2M_PARAM_AE_ID          :  ae_credential_id,
                         OneM2MPrimitive.M2M_PARAM_POINT_OF_ACCESS: [poa],
                     }
                 )

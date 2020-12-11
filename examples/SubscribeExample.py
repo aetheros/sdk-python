@@ -24,9 +24,9 @@ def main():
         # Create an AE instance to register with the CSE.
         req_ae = AE(
             {
-                AE.M2M_ATTR_APP_ID: 'N_SB_AE_1',
-                AE.M2M_ATTR_APP_NAME: 'N_SB_AE_1',
-                AE.M2M_ATTR_AE_ID: AE_ID,
+                AE.M2M_ATTR_APP_ID         : 'N_SB_AE_1',
+                AE.M2M_ATTR_APP_NAME       : 'N_SB_AE_1',
+                AE.M2M_ATTR_AE_ID          : AE_ID,
                 AE.M2M_ATTR_POINT_OF_ACCESS: ['http://localhost:7000'],
             }
         )

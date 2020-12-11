@@ -18,16 +18,16 @@ class OneM2MRequest(OneM2MPrimitive):
 
     # Result content args.
     # @todo move these to their own class?
-    M2M_RCN_NOTHING = 0
-    M2M_RCN_UNSPECIFIED = 1
-    M2M_RCN_ATTRIBUTES = 1
-    M2M_RCN_HIERARCHICAL_ADDRESS = 2
-    M2M_RCN_HIERARCHICAL_ADDRESS_ATTRIBUTES = 3
-    M2M_RCN_ATTRIBUTES_CHILD_RESOURCES = 4
+    M2M_RCN_NOTHING                              = 0
+    M2M_RCN_UNSPECIFIED                          = 1
+    M2M_RCN_ATTRIBUTES                           = 1
+    M2M_RCN_HIERARCHICAL_ADDRESS                 = 2
+    M2M_RCN_HIERARCHICAL_ADDRESS_ATTRIBUTES      = 3
+    M2M_RCN_ATTRIBUTES_CHILD_RESOURCES           = 4
     M2M_RCN_ATTRIBUTES_CHILD_RESOURCE_REFERENCES = 5
-    M2M_RCN_CHILD_RESOURCE_REFERENCES = 6
-    M2M_RCN_ORIGINAL_RESOURCE = 7
-    M2M_RCN_CHILD_RESOURCES = 8
+    M2M_RCN_CHILD_RESOURCE_REFERENCES            = 6
+    M2M_RCN_ORIGINAL_RESOURCE                    = 7
+    M2M_RCN_CHILD_RESOURCES                      = 8
 
     M2M_RCN = [
         M2M_RCN_NOTHING,
@@ -62,31 +62,31 @@ class OneM2MRequest(OneM2MPrimitive):
 
     # Query string param shortnames.
     # TS-0009-V2.6.1 Table 6.2.2.1-1
-    M2M_PARAM_RESPONSE_TYPE = 'rt'
-    M2M_PARAM_RESULT_PERSISTENCE = 'rp'
-    M2M_PARAM_RESULT_CONTENT = 'rcn'
-    M2M_PARAM_DELIVERY_AGGREGATION = 'da'
-    M2M_PARAM_CREATED_BEFORE = 'crb'
-    M2M_PARAM_CREATED_AFTER = 'cra'
-    M2M_PARAM_MODIFIED_SINCE = 'ms'
-    M2M_PARAM_UNMODIFIED_SINCE = 'us'
-    M2M_PARAM_STATE_TAG_SMALLER = 'sts'
-    M2M_PARAM_STATE_TAG_BIGGER = 'stb'
-    M2M_PARAM_EXPIRE_BEFORE = 'exb'
-    M2M_PARAM_EXPIRE_AFTER = 'exa'
-    M2M_PARAM_LABELS = 'lbl'
-    M2M_PARAM_RESOURCE_TYPE = 'ty'
-    M2M_PARAM_SIZE_ABOVE = 'sza'
-    M2M_PARAM_SIZE_BELOW = 'szb'
-    M2M_PARAM_CONTENT_TYPE = 'cty'
-    M2M_PARAM_LIMIT = 'lim'
-    M2M_PARAM_ATTRIBUTE = 'atr'
-    M2M_PARAM_FILTER_USAGE = 'fu'
-    M2M_PARAM_SEMANTICS_FILTER = 'smf'
-    M2M_PARAM_DISCOVERY_RESULT_TYPE = 'drt'
-    M2M_PARAM_ROLE_IDS = 'rids'
-    M2M_PARAM_TOKEN_IDS = 'tids'
-    M2M_PARAM_LOCAL_TOKEN_IDS = 'ltids'
+    M2M_PARAM_RESPONSE_TYPE           = 'rt'
+    M2M_PARAM_RESULT_PERSISTENCE      = 'rp'
+    M2M_PARAM_RESULT_CONTENT          = 'rcn'
+    M2M_PARAM_DELIVERY_AGGREGATION    = 'da'
+    M2M_PARAM_CREATED_BEFORE          = 'crb'
+    M2M_PARAM_CREATED_AFTER           = 'cra'
+    M2M_PARAM_MODIFIED_SINCE          = 'ms'
+    M2M_PARAM_UNMODIFIED_SINCE        = 'us'
+    M2M_PARAM_STATE_TAG_SMALLER       = 'sts'
+    M2M_PARAM_STATE_TAG_BIGGER        = 'stb'
+    M2M_PARAM_EXPIRE_BEFORE           = 'exb'
+    M2M_PARAM_EXPIRE_AFTER            = 'exa'
+    M2M_PARAM_LABELS                  = 'lbl'
+    M2M_PARAM_RESOURCE_TYPE           = 'ty'
+    M2M_PARAM_SIZE_ABOVE              = 'sza'
+    M2M_PARAM_SIZE_BELOW              = 'szb'
+    M2M_PARAM_CONTENT_TYPE            = 'cty'
+    M2M_PARAM_LIMIT                   = 'lim'
+    M2M_PARAM_ATTRIBUTE               = 'atr'
+    M2M_PARAM_FILTER_USAGE            = 'fu'
+    M2M_PARAM_SEMANTICS_FILTER        = 'smf'
+    M2M_PARAM_DISCOVERY_RESULT_TYPE   = 'drt'
+    M2M_PARAM_ROLE_IDS                = 'rids'
+    M2M_PARAM_TOKEN_IDS               = 'tids'
+    M2M_PARAM_LOCAL_TOKEN_IDS         = 'ltids'
     M2M_PARAM_TOKEN_REQUEST_INDICATOR = 'tqi'
 
     # Request params (query string).
