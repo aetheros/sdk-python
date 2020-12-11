@@ -206,7 +206,7 @@ class CSE:
             uri,
             sub_name,
             Subscription({
-                'm2m:enc': {'net': event_types, 'ty': 4},
+                'enc': {'net': event_types, 'ty': 4},
                 'nct': 1,
                 'nu': [notification_uri],
             }),
