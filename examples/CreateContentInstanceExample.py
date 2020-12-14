@@ -54,7 +54,7 @@ def main():
         print('Creating content instance of resource {}'.format(containerUri))
         res = pn_cse.create_content_instance(containerUri)
         print('Request response code: {}'.format(res.rsc))
-        cin_uri = pc['m2m:uri']
+        cin_uri = res.pc['m2m:uri']
         print('Content instance created: {}'.format(cin_uri))
 
         # Retrieve the content instance.

@@ -3,9 +3,12 @@
 import json, asyncio, threading
 
 from aiohttp import web
+from aiohttp.web_request import Request
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 
 from client.onem2m.http.OneM2MResponse import OneM2MResponse
+
+from typing import Callable, Mapping, MutableMapping, Optional
 
 
 class AsyncResponseListenerFactory:
@@ -15,7 +18,7 @@ class AsyncResponseListenerFactory:
     # Reference to the private inner class.
     instance = None
 
-    def __init__(self, host='0.0.0.0', port=8080):
+    def __init__(self, host: str = '0.0.0.0', port: int = 8080):
         """Initialize the singletone or return the existing instance.
         """
 
@@ -38,18 +41,17 @@ class AsyncResponseListenerFactory:
         loop = None
         _stop_event = threading.Event()
 
+        # RQI to callback function map.  This is where callbacks will be stored.
+        rqi_cb_map: MutableMapping[str, Callable] = {}
+        runner: Optional[web.AppRunner] = None
+
         # Defaults are set in the factory class constructor
-        def __init__(self, host, port):
+        def __init__(self, host: str, port: int):
             threading.Thread.__init__(self)
             # Server host and port.
             self.host = host
             self.port = port
             self.daemon = True  # Kill thread when main exists.
-
-            self.runner = None
-
-            # RQI to callback function map.  This is where callbacks will be stored.
-            self.rqi_cb_map = {}
 
         async def _init_async_response_server(self):
             """Build the async response server.
@@ -94,10 +96,10 @@ class AsyncResponseListenerFactory:
             # Block blarg.
             # web.run_app(server, host=self.host, port=self.port)
 
-        async def _handler(self, req):
+        async def _handler(self, req: Request):
 
             try:
-                request_method = req.method
+                #request_method = req.method
                 body = await req.json()
                 request_id = body['m2m:sgn']['sur']
 
@@ -105,19 +107,17 @@ class AsyncResponseListenerFactory:
 
                 if request_id in self.rqi_cb_map.keys():
                     # Execute callback and pass it the req.
-                    return await self.rqi_cb_map[request_id](req, res)
+                    return await self.rqi_cb_map[request_id](req, res)  # TODO: check argument types
                 else:
                     # No handler has been registed for this request id.
-                    res.set_status(4004)
-                    res.body = 'No response handler has been set for this rqi.'
+                    res.set_status(4004, 'No response handler has been set for this rqi.')
             except Exception as err:
                 print(err)
-                res.set_status(500)
-                res.body = str(err)
+                res.set_status(500, str(err))
 
             return res
 
-        def set_rqi_cb(self, rqi, cb):
+        def set_rqi_cb(self, rqi: str, cb: Callable):
             """Set the callback function for a specific rqi.
 
             Args:
@@ -126,7 +126,7 @@ class AsyncResponseListenerFactory:
             """
             self.rqi_cb_map[str(rqi)] = cb  # Key must be string.
 
-        def call_rqi_cb(self, rqi, res=None):
+        def call_rqi_cb(self, rqi: str, res=None):
             """Execute the callback function for the specified rqi.
 
             Args:
@@ -144,7 +144,7 @@ class AsyncResponseListenerFactory:
 
                 self.rqi_cb_map[rqi](res)
 
-        def get_rqi_cb(self, rqi):
+        def get_rqi_cb(self, rqi: str):
             """Return the callback function of the specified rqi.
             """
             try:
@@ -161,5 +161,5 @@ class InvalidAsyncResponseHandlerArgument(Exception):
     """
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         self.message = msg

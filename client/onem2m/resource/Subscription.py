@@ -18,7 +18,7 @@ class Subscription(OneM2MResource):
     M2M_ATTR_NOTIFICATION_URI            = 'nu'
     M2M_ATTR_NCT                         = 'nct'     # @note can not find in docs.
 
-    def __init__(self, subscription):
+    def __init__(self, subscription: OneM2MResource.Content):
         """
         """
         super().__init__('m2m:sub', subscription)

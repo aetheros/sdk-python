@@ -10,19 +10,21 @@ from client.ae.AE import AE
 from client.ae.AsyncResponseListener import AsyncResponseListenerFactory
 from client.onem2m.OneM2MResource import OneM2MResource
 
+from web_response import Response
+
 NOTIFICATION_SERVER_IP = '0.0.0.0'
 NOTIFICATION_SERVER_PORT = 44346
 
 class LcoControlSchedule(OneM2MResource):
-    def __init__(self, dict):
+    def __init__(self, dict: OneM2MResource.Content):
         super().__init__('lco:lcocs', dict)
 
 class LcoTelemetryTrigger(OneM2MResource):
-    def __init__(self, dict):
+    def __init__(self, dict: OneM2MResource.Content):
         super().__init__('lco:lcottr', dict)
 
 class Lwm2mNotificationClassAttributes(OneM2MResource):
-    def __init__(self, dict):
+    def __init__(self, dict: OneM2MResource.Content):
         super().__init__('lwm2m:nca', dict)
 
 
@@ -46,7 +48,8 @@ def main():
 
         node = '/PN_CSE/nod-015322009906000'    # optional
 
-        #TODO: poa = 'http://<AE public IP Address>:44346/notify'
+        #TODO:
+        poa = 'http://<AE public IP Address>:44346/notify'
 
         cse = CSE('api.netsense.aetheros.com', 443, 'PN_CSE')
         cse.transport_protocol = 'https'
@@ -196,7 +199,7 @@ def main():
 
 
         # Create a callback function to handle async notifications from the sub.
-        async def cb(req, res):
+        async def cb(req, res: Response):
             #  Process request.
             if req.method == 'POST' or req.body_exists():
                 body = await req.json()

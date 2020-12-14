@@ -11,12 +11,15 @@ from client.onem2m.resource.ContentInstance import ContentInstance as ContentIns
 from client.onem2m.resource.Subscription import Subscription
 from client.exceptions.InvalidArgumentException import InvalidArgumentException
 
+from typing import List
 
 class CSE:
 
     CSE_RESOURCE = 'PN_CSE'
 
-    def __init__(self, host, port, rsc = None):
+    ae: AE
+
+    def __init__(self, host: str, port: int, rsc: str = None):
         """Constructor
 
         Args:
@@ -27,10 +30,10 @@ class CSE:
         self.transport_protocol = 'http'
         self.host = host
         self.port = port
-        self.ae = None
+        #self.ae = None
         self.rsc = rsc or CSE.CSE_RESOURCE
 
-    def register_ae(self, ae):
+    def register_ae(self, ae: AE):
         """Synchronously register an AE with a CSE.
 
         Args:
@@ -70,7 +73,7 @@ class CSE:
 
         return oneM2MResponse
 
-    def get_ae(self, ae_id):
+    def get_ae(self, ae_id: str):
 
         # Host and resource.
         to = '{}://{}:{}/PN_CSE/{}'.format(
@@ -114,7 +117,7 @@ class CSE:
         return oneM2MResponse
 
     # @todo add possible rcn values to OneM2MResource class.
-    def create_content_instance(self, uri):
+    def create_content_instance(self, uri: str):
         """Create a content instance of a container resource.
 
         Args:
@@ -143,7 +146,7 @@ class CSE:
 
         return oneM2MResponse
 
-    def retrieve_content_instance(self, uri, rcn=7):
+    def retrieve_content_instance(self, uri: str, rcn: int = 7):
         """Retrieves the latest content instance of a container resource.
 
         Args:
@@ -166,12 +169,12 @@ class CSE:
 
         return oneM2MResponse
 
-    def get_to(self, rsc):
+    def get_to(self, rsc: str):
         rsc = rsc[1:] if rsc[0] == '/' else rsc
         to = '{}://{}:{}/{}'.format(self.transport_protocol, self.host, self.port, rsc)
         return to
 
-    def check_existing_subscriptions(self, uri, subscription_name):
+    def check_existing_subscriptions(self, uri: str, subscription_name: str):
         """Retrieve all existing subscriptions on a resource
         Args:
             uri: URI of a resource.
@@ -191,7 +194,7 @@ class CSE:
         return oneM2MRequest.retrieve()
 
     def create_subscription(
-        self, uri, sub_name, notification_uri, event_types=[3], result_content=None
+        self, uri: str, sub_name: str, notification_uri: str = None, event_types: List[int] = [3], result_content=None
     ):
         """ Create a subscription to a resource.
 
@@ -202,20 +205,24 @@ class CSE:
             OneM2MResponse: The request response.
         """
 
+        json = {
+            'enc': {'net': event_types, 'ty': 4},
+            'nct': 1,
+        }
+
+        if notification_uri:
+            json['nu'] = [notification_uri]
+
         return self.create_resource(
             uri,
             sub_name,
-            Subscription({
-                'enc': {'net': event_types, 'ty': 4},
-                'nct': 1,
-                'nu': [notification_uri],
-            }),
+            Subscription(json),
             result_content
         )
 
 
     def create_resource(
-        self, uri, name, content, result_content=None
+        self, uri: str, name: str, content, result_content=None
     ):
         """ Create a resource.
 
@@ -244,7 +251,7 @@ class CSE:
 
 
     # @note: not really working.  'la' virtual resource never returns the latest content instance.
-    def retrieve_latest_content_instance(self, uri):
+    def retrieve_latest_content_instance(self, uri: str):
         """Retrieve the latest content instance of a container.
 
         Args:
@@ -277,7 +284,7 @@ class CSE:
         else:
             return None
 
-    def retrieve_resource(self, uri):
+    def retrieve_resource(self, uri: str):
         """ Synchronous retrieve resource request.
 
         Args:
@@ -299,7 +306,7 @@ class CSE:
 
         return oneM2MReponse
 
-    def update_resource(self, uri, resource):
+    def update_resource(self, uri: str, resource: OneM2MResource):
         """ Update a resource.
 
         Args:
@@ -347,7 +354,7 @@ class CSE:
 
         return oneM2MResponse
 
-    def delete_resource(self, uri):
+    def delete_resource(self, uri: str):
         """ Delete resource.
 
         Returns:

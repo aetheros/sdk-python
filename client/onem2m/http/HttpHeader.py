@@ -2,13 +2,13 @@
 
 
 class HttpHeader:
-    HOST = 'Host'
-    ACCEPT = 'Accept'
-    CONTENT_TYPE = 'Content-Type'
+    HOST             = 'Host'
+    ACCEPT           = 'Accept'
+    CONTENT_TYPE     = 'Content-Type'
     CONTENT_LOCATION = 'Content-Location'
-    CONTENT_LENGTH = 'Content-Length'
-    ETAG = 'Etag'
+    CONTENT_LENGTH   = 'Content-Length'
+    ETAG             = 'Etag'
 
-    METHOD = 'Method'
-    URI = 'URI'
-    FROM = 'From'
+    METHOD           = 'Method'
+    URI              = 'URI'
+    FROM             = 'From'

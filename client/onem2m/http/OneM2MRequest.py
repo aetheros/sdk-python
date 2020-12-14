@@ -9,6 +9,8 @@ from client.onem2m.OneM2MResource import OneM2MResource
 from client.exceptions.BaseException import BaseException
 from client.onem2m.http.HttpHeader import HttpHeader
 
+from typing import Dict, Mapping, MutableMapping, Any, List, Optional
+
 import os, ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -29,7 +31,7 @@ class OneM2MRequest(OneM2MPrimitive):
     M2M_RCN_ORIGINAL_RESOURCE                    = 7
     M2M_RCN_CHILD_RESOURCES                      = 8
 
-    M2M_RCN = [
+    M2M_RCN: List[int] = [
         M2M_RCN_NOTHING,
         M2M_RCN_UNSPECIFIED,
         M2M_RCN_ATTRIBUTES,
@@ -46,7 +48,7 @@ class OneM2MRequest(OneM2MPrimitive):
     # Required parameters for each onem2m operation.  If a requested operation's params
     # does not contain all of the corresponding parameters outline here, the function
     # performing the operation will raise an RequiredRequestParameterMissingException.
-    REQUIRED_HTTP_PARAMS = {
+    REQUIRED_HTTP_PARAMS: Mapping[str, List[str]] = {
         OneM2MOperation.Create: [
             # OneM2MPrimitive.M2M_PARAM_OPERATION, # Implied by the function name.
             OneM2MPrimitive.M2M_PARAM_TO,  # Set in the constructor or the function.
@@ -90,7 +92,7 @@ class OneM2MRequest(OneM2MPrimitive):
     M2M_PARAM_TOKEN_REQUEST_INDICATOR = 'tqi'
 
     # Request params (query string).
-    QUERY_STRING_PARAMS = [
+    QUERY_STRING_PARAMS: List[str] = [
         M2M_PARAM_RESPONSE_TYPE,
         M2M_PARAM_RESULT_PERSISTENCE,
         M2M_PARAM_RESULT_CONTENT,
@@ -120,7 +122,9 @@ class OneM2MRequest(OneM2MPrimitive):
         OneM2MPrimitive.M2M_PARAM_RESOURCE_NAME,
     ]
 
-    def __init__(self, to=None, params={}):
+    Parameters = MutableMapping[str, Any]
+
+    def __init__(self, to: str = None, params: Parameters = {}):
         """ Constructor.
            Args:
             to: The cse host
@@ -135,7 +139,7 @@ class OneM2MRequest(OneM2MPrimitive):
         # called on the instance and param validation is performed in those functions.
         self.params = params
 
-    def _validate_required_params(self, operation=None, params=None):
+    def _validate_required_params(self, operation: str, params: Parameters):
         """Validates the required parameters (HTTP mapped ones only) for a specified OneM2M operation (Create, Retrieve, ect).
 
         Args:
@@ -148,6 +152,7 @@ class OneM2MRequest(OneM2MPrimitive):
 
         # Get the request params keys.
         request_params = tuple(params.keys())
+
         # Determine the operation.  Operation and parameters can be specified in the constructor and then overriden
         # in the actual call to the request function (create, retrieve, ect...)
         request_operation = (
@@ -163,7 +168,7 @@ class OneM2MRequest(OneM2MPrimitive):
             if param not in request_params:
                 raise RequiredRequestParameterMissingException(operation, param)
 
-    def _validate_query_string_param(self, name, value):
+    def _validate_query_string_param(self, name: str, value):
         """Validates query string parameters are valid.
 
         Args:
@@ -185,7 +190,7 @@ class OneM2MRequest(OneM2MPrimitive):
         # @todo add param value validation base on muliplicity
         # TS-0009-V2.6.1 Table 6.2.2.2-1 query string param values.  Do validation on header values too (are there value constraints)?
 
-    def _map_params_to_headers(self, params):
+    def _map_params_to_headers(self, params: Parameters):
         """ Converts a OneM2M request parameters to their corresponding HTTP headers.
             If the submitted argument contains request parameters that DO NOT map to a
             HTTP header, they will be silently ignored.
@@ -215,7 +220,7 @@ class OneM2MRequest(OneM2MPrimitive):
 
         return header
 
-    def _map_params_to_query_string(self, to, params):
+    def _map_params_to_query_string(self, to: str, params: Parameters):
         """Maps OneM2M parameters to their query string representation and appends them to 'to'.
 
         Args:
@@ -238,7 +243,7 @@ class OneM2MRequest(OneM2MPrimitive):
         # No query string, strip the '? and return the just 'to'.  Otherwise, return the modified to with query string.
         return to[:-1] if to[-1] == '?' else to
 
-    def _resolve_params(self, to, params):
+    def _resolve_params(self, to: Optional[str], params: Optional[MutableMapping[str, Any]] = None):
         """Resolves 'to' and 'params' arguments according to a hierachy:
            1) 'to' and 'param' arguments that are explicitly set here
                override the 'to' and 'param' members set in the constuctor, but
@@ -261,6 +266,8 @@ class OneM2MRequest(OneM2MPrimitive):
         if params is None:
             params = self.params
 
+        assert params is not None
+
         # Generate a random request id.
         params[OneM2MPrimitive.M2M_PARAM_REQUEST_IDENTIFIER] = self._generate_rqi()
 
@@ -274,9 +281,10 @@ class OneM2MRequest(OneM2MPrimitive):
             if OneM2MPrimitive.M2M_PARAM_TO in params.keys():
                 # to param will be removed in _map_params_to_headers.
                 to = params[OneM2MPrimitive.M2M_PARAM_TO]
-            else:
-                if to is None:
-                    to = self.to
+            if to is None:
+                to = self.to
+
+        assert to is not None
 
         if OneM2MPrimitive.M2M_PARAM_TO not in params.keys():
             params[OneM2MPrimitive.M2M_PARAM_TO] = to
@@ -320,7 +328,7 @@ class OneM2MRequest(OneM2MPrimitive):
                 # @todo do some logging
                 pass
 
-    def create(self, to=None, params=None, content=None):
+    def create(self, to: str, params: Parameters = None, content = None):
         """ Synchronous OneM2M Create request.
 
         Args:
@@ -337,6 +345,7 @@ class OneM2MRequest(OneM2MPrimitive):
 
         # Process arguments.
         to, params = self._resolve_params(to, params)
+        assert params is not None
 
         # If params is set to None, check if the instance was initialized with paramters.
         # Raises an RequiredRequestParameterMissingException.
@@ -358,13 +367,13 @@ class OneM2MRequest(OneM2MPrimitive):
             data = {entity_name: content.get_content()}
 
             # Serialize dict. @todo data serialization must be dictated by content-type
-            data = json.dumps(data)
+            json = json.dumps(data)
 
             # HTTP POST implied by OneM2M Create Operation (function signature).
-            http_response = requests.post(to, headers=headers, data=data, verify=False)
+            http_response = requests.post(to, headers = headers, data=json, verify=False)
         else:
             # HTTP POST implied by OneM2M Create Operation (function signature).
-            http_response = requests.post(to, headers=headers, verify=False)
+            http_response = requests.post(to, headers = headers, verify=False)
 
         # Return a OneM2MResponse instance.
         return OneM2MResponse(http_response)
@@ -404,10 +413,10 @@ class OneM2MRequest(OneM2MPrimitive):
             data = {entity_name: content.get_content()}
 
             # Serialize dict. @todo data serialization must be dictated by content-type
-            data = json.dumps(data)
+            json = json.dumps(data)
 
             # HTTP POST implied by OneM2M Create Operation (function signature).
-            http_response = requests.put(to, headers=headers, data=data)
+            http_response = requests.put(to, headers=headers, data=json)
 
             # Return a OneM2MResponse instance.
             return OneM2MResponse(http_response)
@@ -517,12 +526,12 @@ class OneM2MRequest(OneM2MPrimitive):
 
 
 class InvalidOneM2MRequestParameterException(BaseException):
-    def __init__(self, param):
+    def __init__(self, param: str):
         self.message = '{} is not a valid OneM2M request parameter.'.format(param)
 
 
 class RequiredRequestParameterMissingException(BaseException):
-    def __init__(self, op, param):
+    def __init__(self, op: str, param: str):
         """Missing required parameter from a OneM2M request.
 
         Args:
@@ -545,5 +554,5 @@ class InvalidRequestParameterStructureException(BaseException):
         self.msg = 'Request "params" must be a dict. {} recieved.'.format(self.type)
 
 class InvalidOneM2MOperationException(BaseException):
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         self.message = msg

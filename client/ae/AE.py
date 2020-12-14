@@ -5,6 +5,8 @@ import json
 from client.onem2m.OneM2MResource import OneM2MResource
 from client.ae.AsyncResponseListener import AsyncResponseListenerFactory
 
+from typing import List, Mapping, Any, Union
+
 # TS-0001 9.6.5 Resource Type AE.
 class AE(OneM2MResource):
     # AE specific resource attibutes
@@ -24,7 +26,9 @@ class AE(OneM2MResource):
 
     SHORT_NAME = 'm2m:ae'
 
-    def __init__(self, args):
+    aei: str
+
+    def __init__(self, args: Union[AE, str, Mapping[str, Any]]):
         """Constructor
 
         Args:
@@ -39,7 +43,7 @@ class AE(OneM2MResource):
         # CSE returns a resource wrapped in a containing json object with the resource
         # name as its key ex. {'ae': {'aei': '', ...}}.  For AE instantiation and deserialization
         # check for an ae member.  If a regular instantiation using an initialization dict, ignore.
-        if AE.SHORT_NAME in tuple(args.keys()):
+        if isinstance(args, dict) and AE.SHORT_NAME in tuple(args.keys()):
             ae = args[AE.SHORT_NAME]
         else:
             ae = args
@@ -60,7 +64,7 @@ class AE(OneM2MResource):
         """
         return json.dumps(self.__dict__)
 
-    def _validate_attributes(self, ae):
+    def _validate_attributes(self, ae: dict):
         """Synchronously register an AE with a CSE.
 
         Args:
@@ -75,12 +79,12 @@ class AE(OneM2MResource):
             if req_attr not in ae_attributes:
                 raise MissingRequiredAttibuteError('Missing required attribute in AE: "{}"'.format(req_attr))
 
-    def get_async_response_handler(self, host, port):
+    def get_async_response_handler(self, host: str, port: int):
         f1 = AsyncResponseListenerFactory(host, port)
         i = f1.get_instance()
 
         return i
 
 class MissingRequiredAttibuteError(Exception):
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         self.message = msg

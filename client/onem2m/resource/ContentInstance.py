@@ -16,5 +16,5 @@ from client.onem2m.OneM2MResource import OneM2MResource
 #     }
 # }
 class ContentInstance(OneM2MResource):
-    def __init__(self, cin):
+    def __init__(self, cin: OneM2MResource.Content):
         super().__init__('m2m:cin', cin)

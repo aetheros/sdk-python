@@ -2,15 +2,22 @@
 
 import json
 
+from typing import Dict, Any
 
 class OneM2MResource:
+
+    Content = Dict[str, Any]
+
     M2M_ATTR_PRIMITIVE_CONTENT = 'pc'
 
     M2M_TYPE_CONTAINER = '3'
 
-    def __init__(self, short_name = None, dict = None):
+    ri = None
+
+    def __init__(self, short_name: str, dict: OneM2MResource.Content = None):
         # Resource short name will be set in derived class constructor.
-        self.__dict__ = dict
+        if dict is not None:
+            self.__dict__ = dict
         self.short_name = short_name
 
     def __str__(self):

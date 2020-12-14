@@ -7,12 +7,15 @@ from client.onem2m.OneM2MPrimitive import OneM2MPrimitive, MissingRequiredContro
 from client.onem2m.OneM2MOperation import OneM2MOperation
 from client.onem2m.OneM2MResource import OneM2MResource
 
+from web_request import Request
+from web_response import Response
+from typing import Mapping, List, Optional
 
 class OneM2MResponse(OneM2MPrimitive):
     # An exception will be thrown if the http_response object from the requests
     # lib is missing any of the required control or content params listed here.
     # @todo add remaining params.
-    REQUIRED_PARAMS = {
+    REQUIRED_PARAMS: Mapping[str, List[str]] = {
         OneM2MPrimitive.CONTROL: [
             OneM2MPrimitive.X_M2M_ORIGIN,
             OneM2MPrimitive.X_M2M_RI,
@@ -28,7 +31,7 @@ class OneM2MResponse(OneM2MPrimitive):
     # onem2m parameter.
     # If a header is not included here, it will be ignored.
     # TS-0009 6.4.0
-    SUPPORTED_HEADERS = [
+    SUPPORTED_HEADERS: List[str] = [
         # HttpHeader.HOST,
         # HttpHeader.ACCEPT,
         # HttpHeader.CONTENT_TYPE, # Only present in requests if message contains a message-body
@@ -48,7 +51,14 @@ class OneM2MResponse(OneM2MPrimitive):
         # OneM2MPrimitive.X_M2M_ATI
     ]
 
-    def __init__(self, http_response):
+    # @note all response codes should be declared as strings to avoid
+    # casting response codes returned from the requests lib to strings
+    # when handling request responses.
+    rsc: Optional[str] = None
+    uri: Optional[str] = None
+    cn: Optional[str] = None
+
+    def __init__(self, http_response: Response):
         """Converts HTTP response message to onem2m response primitive.
 
         Args:
@@ -74,7 +84,7 @@ class OneM2MResponse(OneM2MPrimitive):
             print(http_response.text)
             raise
 
-    def _map_http_headers_to_m2m_params(self, headers):
+    def _map_http_headers_to_m2m_params(self, headers: Mapping[str, str]):
         """Converts HTTP headers onem2m2 response primitive params and stores them
            instance members.
 

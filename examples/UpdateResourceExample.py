@@ -54,7 +54,7 @@ def main():
         # Create a subscription to the container.
         print('Subscribing to container: {}'.format(containerUri))
         sub_res = pn_cse.create_subscription(containerUri, '10.250.10.142:8080')
-        print('Subscription created: '.format(sub_res.cn))
+        print('Subscription created: {}'.format(sub_res.cn))
 
         print('Retrieving subscription: {}'.format(sub_res.cn))
         res = pn_cse.retrieve_resource(sub_res.cn)

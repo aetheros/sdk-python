@@ -9,6 +9,7 @@ from client.cse.CSE import CSE
 from client.ae.AE import AE
 from client.ae.AsyncResponseListener import AsyncResponseListenerFactory
 
+from web_response import Response
 
 def main():
     try:
@@ -71,7 +72,7 @@ def main():
         # Params are aiohttp request and response instance.
         # https://docs.aiohttp.org/en/stable/web_reference.html?highlight=Request#request-and-base-request
         # https://docs.aiohttp.org/en/stable/web_reference.html?highlight=Response#response-classes
-        async def request_handler(req, res):
+        async def request_handler(req, res: Response):
             #  Process request.
             if req.method == 'POST' or res.body_exists():
                 # Do something with the posted data...
