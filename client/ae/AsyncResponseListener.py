@@ -3,7 +3,7 @@
 import json, asyncio, threading
 
 from aiohttp import web
-from aiohttp.web_request import Request
+from aiohttp.web.request import Request
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 
 from client.onem2m.http.OneM2MResponse import OneM2MResponse

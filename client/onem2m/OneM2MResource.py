@@ -4,9 +4,9 @@ import json
 
 from typing import Dict, Any
 
-class OneM2MResource:
+OneM2MResourceContent = Dict[str, Any]
 
-    Content = Dict[str, Any]
+class OneM2MResource:
 
     M2M_ATTR_PRIMITIVE_CONTENT = 'pc'
 
@@ -14,7 +14,7 @@ class OneM2MResource:
 
     ri = None
 
-    def __init__(self, short_name: str, dict: OneM2MResource.Content = None):
+    def __init__(self, short_name: str, dict: OneM2MResourceContent = None):
         # Resource short name will be set in derived class constructor.
         if dict is not None:
             self.__dict__ = dict

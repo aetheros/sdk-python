@@ -1,4 +1,4 @@
-from client.onem2m.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MResource import OneM2MResource, OneM2MResourceContent
 
 # {
 #     "cin": {
@@ -16,5 +16,5 @@ from client.onem2m.OneM2MResource import OneM2MResource
 #     }
 # }
 class ContentInstance(OneM2MResource):
-    def __init__(self, cin: OneM2MResource.Content):
+    def __init__(self, cin: OneM2MResourceContent):
         super().__init__('m2m:cin', cin)

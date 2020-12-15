@@ -5,7 +5,7 @@ import requests, aiohttp, json, random, urllib
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 from client.onem2m.OneM2MOperation import OneM2MOperation
 from client.onem2m.http.OneM2MResponse import OneM2MResponse
-from client.onem2m.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MResource import OneM2MResource, OneM2MResourceContent
 from client.exceptions.BaseException import BaseException
 from client.onem2m.http.HttpHeader import HttpHeader
 

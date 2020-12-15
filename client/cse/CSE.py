@@ -3,7 +3,7 @@
 import json, random
 
 from client.ae.AE import AE
-from client.onem2m.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MResource import OneM2MResource, OneM2MResourceContent
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 from client.onem2m.http.OneM2MRequest import OneM2MRequest
 from client.onem2m.OneM2MOperation import OneM2MOperation

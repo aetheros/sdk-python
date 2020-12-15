@@ -7,8 +7,8 @@ from client.onem2m.OneM2MPrimitive import OneM2MPrimitive, MissingRequiredContro
 from client.onem2m.OneM2MOperation import OneM2MOperation
 from client.onem2m.OneM2MResource import OneM2MResource
 
-from web_request import Request
-from web_response import Response
+from aiohttp.web.request import Request
+from aiohttp.web.response import Response
 from typing import Mapping, List, Optional
 
 class OneM2MResponse(OneM2MPrimitive):
@@ -75,7 +75,7 @@ class OneM2MResponse(OneM2MPrimitive):
             self._map_http_headers_to_m2m_params(http_response.headers)
 
             # Store the message body as the Content (pc) param.
-            if 'Content-Type' in http_response.headers and 'json' in http_response.headers['Content-Type']:
+            if http_response.text is not None and 'Content-Type' in http_response.headers and 'json' in http_response.headers['Content-Type']:
                 self.pc = json.loads(http_response.text)
 
         except Exception as e:

@@ -8,23 +8,23 @@ from client.onem2m.http.OneM2MRequest import OneM2MRequest
 from client.cse.CSE import CSE
 from client.ae.AE import AE
 from client.ae.AsyncResponseListener import AsyncResponseListenerFactory
-from client.onem2m.OneM2MResource import OneM2MResource
+from client.onem2m.OneM2MResource import OneM2MResource, OneM2MResourceContent
 
-from web_response import Response
+from aiohttp.web.response import Response
 
 NOTIFICATION_SERVER_IP = '0.0.0.0'
 NOTIFICATION_SERVER_PORT = 44346
 
 class LcoControlSchedule(OneM2MResource):
-    def __init__(self, dict: OneM2MResource.Content):
+    def __init__(self, dict: OneM2MResourceContent):
         super().__init__('lco:lcocs', dict)
 
 class LcoTelemetryTrigger(OneM2MResource):
-    def __init__(self, dict: OneM2MResource.Content):
+    def __init__(self, dict: OneM2MResourceContent):
         super().__init__('lco:lcottr', dict)
 
 class Lwm2mNotificationClassAttributes(OneM2MResource):
-    def __init__(self, dict: OneM2MResource.Content):
+    def __init__(self, dict: OneM2MResourceContent):
         super().__init__('lwm2m:nca', dict)
 
 
