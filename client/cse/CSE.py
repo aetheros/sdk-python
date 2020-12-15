@@ -234,7 +234,7 @@ class CSE:
         if result_content is not None:
             params[OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT] = result_content
 
-        content.name = name
+        content.__dict__[OneM2MPrimitive.M2M_PARAM_RESOURCE_NAME] = name
 
         oneM2MRequest = OneM2MRequest()
 
