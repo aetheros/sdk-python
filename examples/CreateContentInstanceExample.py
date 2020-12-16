@@ -34,17 +34,18 @@ def main():
 
         # Register ae
         res = pn_cse.register_ae(req_ae)
+        res.dump('Register AE')
 
         if res.rsc != OneM2MPrimitive.M2M_RSC_CREATED:
             print('Could not register AE\nExiting...')
             sys.exit()
 
         print('AE registration successful:')
-        print(res.pc)
 
         # Discover containers.
         print('Discovering containers:')
         containers = pn_cse.discover_containers()
+        containers.dump('Discover Containers')
         print('Retrieved {} containers\n'.format(len(containers)))
 
         # Pick a container resource to work with.
@@ -53,13 +54,16 @@ def main():
         # Create the content instance.
         print('Creating content instance of resource {}'.format(containerUri))
         res = pn_cse.create_content_instance(containerUri)
-        print('Request response code: {}'.format(res.rsc))
+        res.dump('Create Content Instance')
+
         cin_uri = res.pc['m2m:uri']
         print('Content instance created: {}'.format(cin_uri))
 
         # Retrieve the content instance.
         print('Retrieving content instance: {}'.format(cin_uri))
         res = pn_cse.retrieve_content_instance(cin_uri)
+        res.dump('Retrieve Content Instance')
+
         cin = res.pc['m2m:req']['ors']['pc']
         print(cin)
 
@@ -71,7 +75,7 @@ def main():
         # Clean up AE.
         if pn_cse.ae is not None:
             del_res = pn_cse.delete_ae()
-            print('AE delete response code {}: '.format(del_res.rsc))
+            del_res.dump('Delete AE')
 
 
 if __name__ == '__main__':

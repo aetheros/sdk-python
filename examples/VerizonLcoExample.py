@@ -71,7 +71,7 @@ def main():
                 )
             )
 
-            dump_response('Register AE', ae_reg_response)
+            ae_reg_response.dump('Register AE')
             print('\n===============================\n')
 
         print('Using AE with ID {}'.format(cse.ae.aei))
@@ -82,7 +82,7 @@ def main():
             print('Discovering existing nodes')
             discover_response = cse.discover_containers()
 
-            dump_response('Discover AE', discover_response)
+            discover_response.dump('Discover AE')
             print('\n===============================\n')
 
             # Pick a random container.
@@ -115,7 +115,7 @@ def main():
 
         print('Reading Telemetry Transmission')
         ttn_response = cse.retrieve_resource(node + '/lcottn0')
-        dump_response('Read Telemetry Transmission', ttn_response)
+        ttn_response.dump('Read Telemetry Transmission')
 
         print('\n===============================\n')
 
@@ -139,7 +139,7 @@ def main():
                 #'poa': poa,
             },
         ).retrieve()
-        dump_response('Read Telemetry Transmission', retrieve_sub_response)
+        retrieve_sub_response.dump('Discover Subscriptions')
         print('\n===============================\n')
 
         if "poa" in locals():
@@ -151,11 +151,11 @@ def main():
 
                 sub_resource = cse.retrieve_resource(sub).pc['m2m:sub']
 
-                if False and poa in sub_resource['nu']:
+                if poa in sub_resource['nu']:
                     existing_subscription = sub
                 else:
                     delete_sub_response = cse.delete_resource(sub)
-                    dump_response('Delete Subscription', delete_sub_response)
+                    delete_sub_response.dump('Delete Subscription')
 
 
             if not existing_subscription:
@@ -173,7 +173,7 @@ def main():
                         OneM2MPrimitive.M2M_NOTIFICATION_EVENT_TYPES.CreateOfDirectChildResource.value,
                     ]
                 )
-                dump_response('Create Subscription', create_sub_response)
+                create_sub_response.dump('Create Subscription')
                 print('\n===============================\n')
 
                 existing_subscription = lcoi_url + '/' + sub_name
@@ -190,11 +190,11 @@ def main():
 
         try:
             update_nca_response = cse.update_resource(nca_url, nca)
-            dump_response('Update NCA', update_nca_response)
+            update_nca_response.dump('Update NCA')
             
         except Exception as e:
             create_nca_response = cse.create_resource(lcoi_url, 'nca', nca)
-            dump_response('Create NCA', create_nca_response)
+            create_nca_response.dump('Create NCA')
 
         print('\n===============================\n')
 
@@ -237,27 +237,18 @@ def main():
         print('Removing existing {} subscriptions on {}'.format(sub_name, container))
         for sub in retrieve_sub_response.pc['m2m:uril']:
             del_response = cse.delete_resource(sub)
-            print('Response code: {}'.format(del_response.rsc))
-            print('Response body:\n{}'.format(del_response.pc))
+            del_response.dump('Delete Subscription')
 
         # Clean up AE.
         if cse.ae is not None:
             del_res = cse.delete_ae()
-            print('AE delete response code: {} '.format(del_res.rsc))
+            del_res.dump('Delete AE')
 
 
 #    except Exception as e:
 #        print(e)
 #    finally:
 #        pass
-
-def dump_response(name, response):
-
-    print('{} Response code: {}'.format(name, response.rsc))
-    print('{} Request ID: {}'.format(name, response.rqi))
-
-    if response.pc:
-        print('{} Response body:\n{}'.format(name, json.dumps(response.pc, indent=2)))
 
 if __name__ == '__main__':
     main()

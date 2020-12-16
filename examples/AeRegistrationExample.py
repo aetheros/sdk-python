@@ -34,6 +34,7 @@ def main():
 
         # Register ae
         res = pn_cse.register_ae(req_ae)
+        res.dump('Register AE')
 
         # None indicates failed registration.
         if res.rsc != OneM2MPrimitive.M2M_RSC_CREATED:
@@ -41,7 +42,6 @@ def main():
             sys.exit()
 
         print('AE registration successful:')
-        print(res.pc)
 
     except Exception as err:
         print('Exception raised...\n')
@@ -51,7 +51,7 @@ def main():
         # Clean up AE.
         if pn_cse.ae is not None:
             del_res = pn_cse.delete_ae()
-            print('AE delete response code: {}'.format(del_res.rsc))
+            del_res.dump('Delete AE')
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ from client.exceptions.InvalidArgumentException import InvalidArgumentException
 
 
 class CSETests(unittest.TestCase):
-    CSE = CSE('localhost', '8100')
+    CSE = CSE('localhost', 8100)
 
     def test_registration_with_invalid_arg(self):
         """AE registration fails with non AE instance argument."""

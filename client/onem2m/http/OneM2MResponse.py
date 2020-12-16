@@ -56,6 +56,7 @@ class OneM2MResponse(OneM2MPrimitive):
     rsc: Optional[str] = None
     uri: Optional[str] = None
     cn: Optional[str] = None
+    rqi: Optional[str] = None
 
     def __init__(self, http_response: web.Response):
         """Converts HTTP response message to onem2m response primitive.
@@ -116,3 +117,15 @@ class OneM2MResponse(OneM2MPrimitive):
 
         # Store the params as instance members.
         self.__dict__ = onem2m_params
+
+
+    def dump(self, name: str):
+        
+        print('{} Response code: {}'.format(name, self.rsc))
+
+        if self.rqi:
+            print('{} Request ID: {}'.format(name, self.rqi))
+
+        if self.pc:
+            print('{} Response body:\n{}'.format(name, json.dumps(self.pc, indent=2)))
+
