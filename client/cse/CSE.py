@@ -19,8 +19,7 @@ class CSE:
     CSE_RESOURCE = 'PN_CSE'
 
     ae: Optional[AE] = None
-
-    def __init__(self, host: str, port: int, rsc: str = None):
+    def __init__(self, host: str, port: int, rsc: str = None, transport_protocol = 'http'):
         """Constructor
 
         Args:
@@ -28,7 +27,7 @@ class CSE:
             port (int): CSE port
             rsc (str): Base resource
         """
-        self.transport_protocol = 'http'
+        self.transport_protocol = transport_protocol
         self.host = host
         self.port = port
         self.rsc = rsc or CSE.CSE_RESOURCE

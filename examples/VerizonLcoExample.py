@@ -52,8 +52,7 @@ def main():
         #TODO:
         poa = 'http://<AE public IP Address>:44346/notify'
 
-        cse = CSE('api.netsense.aetheros.com', 443, 'PN_CSE')
-        cse.transport_protocol = 'https'
+        cse = CSE('api.netsense.aetheros.com', 443, 'PN_CSE', 'https')
 
         ae = cse.get_ae(ae_id) if ae_id else None
 
