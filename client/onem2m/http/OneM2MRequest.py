@@ -367,10 +367,10 @@ class OneM2MRequest(OneM2MPrimitive):
             data = {entity_name: content.get_content()}
 
             # Serialize dict. @todo data serialization must be dictated by content-type
-            json = json.dumps(data)
+            json_data = json.dumps(data)
 
             # HTTP POST implied by OneM2M Create Operation (function signature).
-            http_response = requests.post(to, headers = headers, data=json, verify=False)
+            http_response = requests.post(to, headers = headers, data=json_data, verify=False)
         else:
             # HTTP POST implied by OneM2M Create Operation (function signature).
             http_response = requests.post(to, headers = headers, verify=False)
@@ -413,10 +413,10 @@ class OneM2MRequest(OneM2MPrimitive):
             data = {entity_name: content.get_content()}
 
             # Serialize dict. @todo data serialization must be dictated by content-type
-            json = json.dumps(data)
+            json_data = json.dumps(data)
 
             # HTTP POST implied by OneM2M Create Operation (function signature).
-            http_response = requests.put(to, headers=headers, data=json)
+            http_response = requests.put(to, headers=headers, data=json_data)
 
             # Return a OneM2MResponse instance.
             return OneM2MResponse(http_response)

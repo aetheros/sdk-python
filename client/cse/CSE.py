@@ -11,13 +11,13 @@ from client.onem2m.resource.ContentInstance import ContentInstance as ContentIns
 from client.onem2m.resource.Subscription import Subscription
 from client.exceptions.InvalidArgumentException import InvalidArgumentException
 
-from typing import List
+from typing import List, Optional
 
 class CSE:
 
     CSE_RESOURCE = 'PN_CSE'
 
-    ae: AE
+    ae: Optional[AE] = None
 
     def __init__(self, host: str, port: int, rsc: str = None):
         """Constructor
@@ -30,7 +30,6 @@ class CSE:
         self.transport_protocol = 'http'
         self.host = host
         self.port = port
-        #self.ae = None
         self.rsc = rsc or CSE.CSE_RESOURCE
 
     def register_ae(self, ae: AE):
@@ -127,10 +126,12 @@ class CSE:
             OneM2MResponse: The request response.
         """
 
+
         # Strip leading '/'
         uri = uri[1:] if uri[0] == '/' else uri
 
         to = self.get_to(uri)
+        assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,  # resource id.
             OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 1,  # @todo add as function arg.
@@ -157,6 +158,7 @@ class CSE:
         """
 
         to = self.get_to(uri)
+        assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
             OneM2MRequest.M2M_PARAM_RESULT_CONTENT: '',
@@ -183,6 +185,7 @@ class CSE:
             OneM2MResponse: The request response.
         """
         to = self.get_to(uri)
+        assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
             OneM2MPrimitive.M2M_PARAM_FILTER_USAGE: 1,
@@ -205,18 +208,18 @@ class CSE:
             OneM2MResponse: The request response.
         """
 
-        json = {
+        json_data = {
             'enc': {'net': event_types, 'ty': 4},
             'nct': 1,
         }
 
         if notification_uri:
-            json['nu'] = [notification_uri]
+            json_data['nu'] = [notification_uri]
 
         return self.create_resource(
             uri,
             sub_name,
-            Subscription(json),
+            Subscription(json_data),
             result_content
         )
 
@@ -234,6 +237,7 @@ class CSE:
         """
 
         to = self.get_to(uri)
+        assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
         }
@@ -266,6 +270,7 @@ class CSE:
 
         # Remove leading slash
         uri = uri[1:] if uri[0] == '/' else uri
+        assert self.ae is not None
         to = '{}://{}:{}/{}/la'.format(
             self.transport_protocol, self.host, self.port, uri
         )
@@ -295,6 +300,7 @@ class CSE:
         """
 
         to = self.get_to(uri)
+        assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
             #OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: OneM2MRequest.M2M_RCN_CHILD_RESOURCE_REFERENCES,
@@ -321,7 +327,10 @@ class CSE:
 
         to = self.get_to(uri)
 
-        params = {OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri}
+        assert self.ae is not None
+        params = {
+            OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri
+        }
 
         oneM2MRequest = OneM2MRequest()
 
@@ -364,6 +373,7 @@ class CSE:
         to = self.get_to(uri)
 
         # op is not required as it is implied by the function that the params will be passed to.
+        assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_TO: to,
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
