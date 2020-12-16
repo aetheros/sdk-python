@@ -10,7 +10,8 @@ from client.ae.AE import AE
 from client.ae.AsyncResponseListener import AsyncResponseListenerFactory
 from client.onem2m.OneM2MResource import OneM2MResource, OneM2MResourceContent
 
-from aiohttp.web.response import Response
+from aiohttp import web
+from aiohttp.payload import Payload
 
 NOTIFICATION_SERVER_IP = '0.0.0.0'
 NOTIFICATION_SERVER_PORT = 44346
@@ -199,18 +200,18 @@ def main():
 
 
         # Create a callback function to handle async notifications from the sub.
-        async def cb(req, res: Response):
+        async def cb(req, res: web.Response):
             #  Process request.
             if req.method == 'POST' or req.body_exists():
                 body = await req.json()
                 print(body['m2m:sgn']['nev']['rep']['lco:lcoi'])
 
                 # Modify response.  All that is set is content_type == OneM2MPrimitive.CONTENT_TYPE_JSON
-                res.set_status(OneM2MPrimitive.M2M_RSC_OK)
+                res.set_status(int(OneM2MPrimitive.M2M_RSC_OK))
                 res.body = json.dumps({
                     "msg":"ok"
                     }
-                )
+                ) # type: ignore
 
             # Send response.
             return res

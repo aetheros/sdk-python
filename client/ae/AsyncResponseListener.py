@@ -3,7 +3,6 @@
 import json, asyncio, threading
 
 from aiohttp import web
-from aiohttp.web.request import Request
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
 
 from client.onem2m.http.OneM2MResponse import OneM2MResponse
@@ -96,7 +95,7 @@ class AsyncResponseListenerFactory:
             # Block blarg.
             # web.run_app(server, host=self.host, port=self.port)
 
-        async def _handler(self, req: Request):
+        async def _handler(self, req: web.Request):
 
             try:
                 #request_method = req.method

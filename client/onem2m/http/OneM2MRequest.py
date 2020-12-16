@@ -520,7 +520,7 @@ class OneM2MRequest(OneM2MPrimitive):
         """Generate a random request id.
 
         Returns:
-            str: Request id.
+            str: web.Request id.
         """
         return str(random.randrange(1000000, 999999999999))
 

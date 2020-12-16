@@ -7,8 +7,7 @@ from client.onem2m.OneM2MPrimitive import OneM2MPrimitive, MissingRequiredContro
 from client.onem2m.OneM2MOperation import OneM2MOperation
 from client.onem2m.OneM2MResource import OneM2MResource
 
-from aiohttp.web.request import Request
-from aiohttp.web.response import Response
+from aiohttp import web
 from typing import Mapping, List, Optional
 
 class OneM2MResponse(OneM2MPrimitive):
@@ -58,14 +57,14 @@ class OneM2MResponse(OneM2MPrimitive):
     uri: Optional[str] = None
     cn: Optional[str] = None
 
-    def __init__(self, http_response: Response):
+    def __init__(self, http_response: web.Response):
         """Converts HTTP response message to onem2m response primitive.
 
         Args:
             http_response: requests response instance.
         """
 
-        http_response.raise_for_status()
+        http_response.raise_for_status() # type: ignore
 
         try:
             self.pc = None
