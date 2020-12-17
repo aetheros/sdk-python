@@ -24,7 +24,7 @@ class OneM2MResource:
         return json.dumps(self.__dict__)
 
     def get_content(self):
-        return {i:d[i] for i in self.__dict__ if i != 'short_name'}
+        return {i:self.__dict__[i] for i in self.__dict__ if i != 'short_name'}
 
 
 # @todo add resouce short name not set exception for OneM2MRequest class to raise.
