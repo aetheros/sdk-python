@@ -116,7 +116,7 @@ class CSE:
         return oneM2MResponse
 
     # @todo add possible rcn values to OneM2MResource class.
-    def create_content_instance(self, uri: str):
+    def create_content_instance(self, uri: str, content: ContentInstance):
         """Create a content instance of a container resource.
 
         Args:
@@ -134,12 +134,13 @@ class CSE:
         assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,  # resource id.
-            OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 1,  # @todo add as function arg.
-            OneM2MPrimitive.X_M2M_RTV: 1,
+            #OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 1,  # @todo add as function arg.
+            #OneM2MPrimitive.X_M2M_RTV: 1,
             OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: 3,
+            OneM2MPrimitive.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.ContentInstance,
         }
 
-        content_instance = ContentInstance({'con': 'default content'})
+        content_instance = content
 
         oneM2MRequest = OneM2MRequest()
 
@@ -161,7 +162,6 @@ class CSE:
         assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
-            OneM2MRequest.M2M_PARAM_RESULT_CONTENT: '',
             OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 3,
         }
 

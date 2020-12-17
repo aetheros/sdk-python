@@ -5,6 +5,7 @@ import os, sys, json, time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from client.onem2m.OneM2MPrimitive import OneM2MPrimitive
+from client.onem2m.resource.ContentInstance import ContentInstance
 from client.cse.CSE import CSE
 from client.ae.AE import AE
 
@@ -53,7 +54,8 @@ def main():
 
         # Create the content instance.
         print('Creating content instance of resource {}'.format(containerUri))
-        res = pn_cse.create_content_instance(containerUri)
+        content = ContentInstance({'con': 'default content'})
+        res = pn_cse.create_content_instance(containerUri, content)
         res.dump('Create Content Instance')
 
         cin_uri = res.pc['m2m:uri']
