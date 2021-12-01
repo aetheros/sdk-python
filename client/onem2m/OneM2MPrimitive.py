@@ -1,3 +1,5 @@
+# Copyright (c) Aetheros, Inc.  See COPYRIGHT
+
 #!/usr/bin/env python
 
 from client.onem2m.OneM2MOperation import OneM2MOperation

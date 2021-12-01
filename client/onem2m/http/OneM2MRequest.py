@@ -1,3 +1,5 @@
+# Copyright (c) Aetheros, Inc.  See COPYRIGHT
+
 #!/usr/bin/env python
 
 import requests, aiohttp, json, random, urllib
