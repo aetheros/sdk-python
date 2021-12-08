@@ -56,6 +56,7 @@ class CSE:
         params = {
             OneM2MPrimitive.M2M_PARAM_TO: to,
             OneM2MPrimitive.M2M_PARAM_FROM: ae.aei,  # The AE-Credential-ID needs to be removed from the ae object
+            OneM2MRequest.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.AE.value
         }
 
         # Remove AE-Credential-ID.
@@ -81,7 +82,10 @@ class CSE:
             self.transport_protocol, self.host, self.port, ae_id
         )
 
-        params = {OneM2MPrimitive.M2M_PARAM_FROM: ae_id}
+        params = {
+            OneM2MPrimitive.M2M_PARAM_FROM: ae_id,
+            OneM2MRequest.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.AE.value
+        }
 
         # Create a request object
         oneM2MRequest = OneM2MRequest()
@@ -93,7 +97,7 @@ class CSE:
 
         return oneM2MResponse
 
-    def discover_containers(self):
+    def discover_resources(self):
         """ Synchronously discover containers registered with the CSE.
 
         Returns:
@@ -102,15 +106,18 @@ class CSE:
         Raises:
             InvalidArgumentException: If the argument is not an AE.
         """
-        # note: fu (filter usage) parameter required for resource discovery
+        # note: fu (filter usage) parameter required for resource discovery.
         to = self.get_to(self.rsc)
 
-        # Create a request object
-        oneM2MRequest = OneM2MRequest(to)
+        # Create a request object.
 
-        oneM2MRequest.set_param(OneM2MRequest.M2M_PARAM_FILTER_USAGE, 1)
-        oneM2MRequest.set_param(OneM2MRequest.M2M_PARAM_FROM, self.ae.ri)
-        oneM2MRequest.set_param(OneM2MRequest.M2M_PARAM_RESOURCE_TYPE, OneM2MPrimitive.M2M_RESOURCE_TYPES.Node.value)
+        params = {
+            OneM2MRequest.M2M_PARAM_FILTER_USAGE: 1,
+            OneM2MRequest.M2M_PARAM_FROM: self.ae.ri,
+            OneM2MRequest.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.Node.value
+        }
+
+        oneM2MRequest = OneM2MRequest(to, params)
 
         # Returns a OneM2MResponse object.  Handle any response code logic here.
         oneM2MResponse = oneM2MRequest.retrieve()
@@ -118,7 +125,7 @@ class CSE:
         return oneM2MResponse
 
     # @todo add possible rcn values to OneM2MResource class.
-    def create_content_instance(self, uri: str, content: ContentInstance):
+    def create_content_instance(self, uri: str, content: ContentInstance = None):
         """Create a content instance of a container resource.
 
         Args:
@@ -128,7 +135,6 @@ class CSE:
             OneM2MResponse: The request response.
         """
 
-
         # Strip leading '/'
         uri = uri[1:] if uri[0] == '/' else uri
 
@@ -136,10 +142,8 @@ class CSE:
         assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,  # resource id.
-            #OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 1,  # @todo add as function arg.
-            #OneM2MPrimitive.X_M2M_RTV: 1,
-            OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: 3,
-            OneM2MPrimitive.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.ContentInstance,
+            OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: OneM2MPrimitive.M2M_RESULT_CONTENT_TYPES.ChildResources,
+            OneM2MPrimitive.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.ContentInstance.value,
         }
 
         content_instance = content
@@ -164,7 +168,8 @@ class CSE:
         assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
-            OneM2MRequest.M2M_PARAM_RESULT_CONTENT: 3,
+            OneM2MRequest.M2M_PARAM_RESULT_CONTENT: OneM2MPrimitive.M2M_RESOURCE_TYPES.ContentInstance.value,
+            OneM2MPrimitive.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.ContentInstance.value
         }
 
         oneM2MRequest = OneM2MRequest(to, params)
@@ -291,7 +296,7 @@ class CSE:
         else:
             return None
 
-    def retrieve_resource(self, uri: str):
+    def retrieve_resource(self, uri: str, ty: OneM2MPrimitive.M2M_RESOURCE_TYPES):
         """ Synchronous retrieve resource request.
 
         Args:
@@ -305,7 +310,7 @@ class CSE:
         assert self.ae is not None
         params = {
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
-            #OneM2MPrimitive.M2M_PARAM_RESULT_CONTENT: OneM2MRequest.M2M_RCN_CHILD_RESOURCE_REFERENCES,
+            OneM2MRequest.M2M_PARAM_RESOURCE_TYPE: ty
         }
 
         oneM2MRequest = OneM2MRequest(to, params)
@@ -355,6 +360,7 @@ class CSE:
         params = {
             OneM2MPrimitive.M2M_PARAM_TO: to,
             OneM2MPrimitive.M2M_PARAM_FROM: self.ae.ri,
+            OneM2MRequest.M2M_PARAM_RESOURCE_TYPE: OneM2MPrimitive.M2M_RESOURCE_TYPES.AE.value
         }
 
         # Create a request object

@@ -46,10 +46,10 @@ def main():
 
         # Discover containers.
         print('Discovering containers:')
-        containers = pn_cse.discover_containers()
+        containers = pn_cse.discover_resources()
         containers.dump('Discover Containers')
 
-        print('Retrieved {} containers\n'.format(len(containers)))
+        print('Retrieved {} containers\n'.format(len(containers.pc['m2m:uril'])))
     except Exception as err:
         print('Exception raised...\n')
         print(err)

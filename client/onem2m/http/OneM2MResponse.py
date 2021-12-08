@@ -81,10 +81,7 @@ class OneM2MResponse(OneM2MPrimitive):
                 self.pc = json.loads(http_response.text)
 
         except Exception as e:
-            print(e)
-            print(http_response)
-            print(http_response.text)
-            raise
+            raise e
 
     def _map_http_headers_to_m2m_params(self, headers: Mapping[str, str]):
         """Converts HTTP headers onem2m2 response primitive params and stores them

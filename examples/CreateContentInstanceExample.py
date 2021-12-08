@@ -45,31 +45,32 @@ def main():
 
         print('AE registration successful:')
 
-        # Discover containers.
-        print('Discovering containers:')
-        containers = pn_cse.discover_containers()
-        containers.dump('Discover Containers')
-        print('Retrieved {} containers\n'.format(len(containers)))
-
         # Pick a container resource to work with.
-        containerUri = containers[0]
+        container_uri = '/PN_CSE/policynet.m2m/cntPolicy9550'
 
         # Create the content instance.
-        print('Creating content instance of resource {}'.format(containerUri))
+        print('Creating content instance of resource {}'.format(container_uri))
         content = ContentInstance({'con': 'default content'})
-        res = pn_cse.create_content_instance(containerUri, content)
+
+        res = pn_cse.create_content_instance(container_uri, content)
         res.dump('Create Content Instance')
 
-        cin_uri = res.pc['m2m:uri']
-        print('Content instance created: {}'.format(cin_uri))
+        # Build content instance uri.
+        cin_uri = container_uri+'/'+res.pc['m2m:cin']['ri']
+        cin_ty = res.pc['m2m:cin']['ty']
 
         # Retrieve the content instance.
         print('Retrieving content instance: {}'.format(cin_uri))
-        res = pn_cse.retrieve_content_instance(cin_uri)
+
+        print('Waiting 10 seconds...') 
+        time.sleep(10)
+
+        res = pn_cse.retrieve_resource(cin_uri, cin_ty)
+
         res.dump('Retrieve Content Instance')
 
-        cin = res.pc['m2m:req']['ors']['pc']
-        print(cin)
+        # cin = res.pc['m2m:req']['ors']['pc']
+        # print(cin)
 
     except Exception as err:
         print('Exception raised...\n')

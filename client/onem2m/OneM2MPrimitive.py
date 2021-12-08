@@ -9,12 +9,11 @@ from client.onem2m.http.HttpStatusCode import HttpStatusCode
 import json
 from enum import Enum, unique
 
-
 class OneM2MPrimitive:
     CONTROL = 'control'
     CONTENT = 'content'
 
-    CONTENT_TYPE_JSON = 'application/vnd.onem2m-res+json; ty=2'
+    CONTENT_TYPE_JSON = 'application/vnd.onem2m-res+json;'
 
     # OneM2M HTTP HEADERS
     X_M2M_ORIGIN = 'X-M2M-Origin'
