@@ -356,7 +356,7 @@ class OneM2MRequest(OneM2MPrimitive):
 
         # Set the content type AND append the oneM2M resource type for the request.
         # @todo move this to member with setter function.
-        headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON + ' ty='+str(params['ty'])
+        headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON + '; ty='+str(params['ty'])
 
         # Extract entity members as dict.
         if isinstance(content, OneM2MResource):
@@ -405,7 +405,7 @@ class OneM2MRequest(OneM2MPrimitive):
 
         # Set the content type for the request.
         # @todo move this to member with setter function.
-        headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON + ' ty='+str(params['ty'])
+        headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON
 
         # Extract entity members as dict.
         if isinstance(content, OneM2MResource):
@@ -448,10 +448,6 @@ class OneM2MRequest(OneM2MPrimitive):
         # Convert OneM2M request params to headers for HTTP request.
         headers = self._map_params_to_headers(params)
 
-        # Set the content type for the request.
-        # @todo move this to member with setter function.
-        headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON + ' ty='+str(params['ty'])
-
         # HTTP GET implied by OneM2M retrieve Operation (function signature).
         http_response = requests.get(to, headers=headers, verify=False)
 
@@ -478,10 +474,6 @@ class OneM2MRequest(OneM2MPrimitive):
 
         # Build headers for HTTP request.
         headers = self._map_params_to_headers(params)
-
-        # Set the content type for the request.
-        # @todo move this to member with setter function.
-        headers[HttpHeader.CONTENT_TYPE] = OneM2MPrimitive.CONTENT_TYPE_JSON + ' ty='+str(params['ty'])
 
         # HTTP POST implied by OneM2M Create Operation (function signature).
         http_response = requests.delete(to, headers=headers)

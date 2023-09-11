@@ -13,7 +13,7 @@ class OneM2MPrimitive:
     CONTROL = 'control'
     CONTENT = 'content'
 
-    CONTENT_TYPE_JSON = 'application/vnd.onem2m-res+json;'
+    CONTENT_TYPE_JSON = 'application/vnd.onem2m-res+json'
 
     # OneM2M HTTP HEADERS
     X_M2M_ORIGIN = 'X-M2M-Origin'
